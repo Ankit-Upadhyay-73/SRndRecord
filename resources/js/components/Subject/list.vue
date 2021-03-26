@@ -1,13 +1,19 @@
 <template>
 
-    <v-data-table :headers="headers" :items="subjects" :items-per-page="10" class="elevation-1">
+    <v-app>
+        <v-container>
+            <v-data-table :headers="headers" :items="subjects" :items-per-page="10" class="elevation-1">
 
-     </v-data-table>
+            </v-data-table>
+
+        </v-container>
+    </v-app>
 
 </template>
 
 
 <script>
+import Api from '../../../../Apis/Api';
             export default {
                 data () {
                   return {
@@ -18,11 +24,24 @@
                                 sortable: false,
                                 value: 'name',
                             },
-                            { text: 'Weightage', value: 'weightage' },
-                            { text: 'Average Passing', value: 'passing' },
+                            { text: 'Weightage', value: 'total'},
+                            { text: 'Passing', value: 'passing'},
                         ],
                         subjects: []
-                }
+                    }
                 },
+                created(){
+
+                    Api.get('/subjects').then((data)=>{
+
+                        for(let subject of data["data"])
+                        {
+                            this.subjects.push(subject);
+                        }
+
+                    });
+
+                }
+
             }
     </script>

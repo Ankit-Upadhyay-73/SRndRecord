@@ -22,13 +22,21 @@
                                             <v-col cols="8">
                                                 <v-text-field dense outlined placeholder="eg John@gmail.com" label="Email" color="black" v-model="head.email"    :rules="[() => !!head.email || 'This field is required']" >
                                                 </v-text-field>
+                                                <span class="text-danger" v-if="errors.email">
+                                                    {{errors.email[0]}}
+                                                </span>
                                             </v-col>
                                         </v-row>
+
                                         <v-row class="d-flex" dense style="display:flex;justify-content:center">
                                             <v-col cols="8">
                                                 <v-text-field dense outlined  label="Password" color="black" v-model="head.password"  :rules="[() => !!head.password || 'This field is required']" >
                                                 </v-text-field>
+                                                <span class="text-danger" v-if="errors.password">
+                                                    {{errors.password[0]}}
+                                                </span>
                                             </v-col>
+
                                         </v-row>
                                         <v-row style="display:flex;justify-content:center">
                                             <v-btn style="background-color:black" text  class="white--text mr-2 text-capitalize" @click="onHeadLogin()">
@@ -52,27 +60,53 @@
 </template>
 
 <script>
-import axios from 'axios';
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
-
+import User from '../../../../Apis/User';
+import CSRF from '../../../../Apis/CSRF';
 export default ({
     data(){
         return{
-            head:{name:"",password:""}
+            head:{email:"",password:""},
+            errors:'',
         }
+    },
+    created()
+    {
     },
     methods:{
         onHeadLogin:function()
         {
-            axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(() => {
-                axios.get('http://127.0.0.1:8000/api/users')
-                .then((response)=>{
-                    console.log(response);
+
+                CSRF.getCookies().then(()=>{
+                    User.login(this.head).catch(error => {
+                        if(error.response.status === 422)
+                        {
+                            this.errors = error.response.data.errors;
+                        }
+                    });
+
+                    User.fetchUser().then(data => {
+                        this.$router.push({path:'/actions'});
+                    });
+
                 });
 
-            });
+
+            // axios.get('http://127.0.0.1:8000/api/csrf-cookie').then(data => {
+
+            //     axios.post('http://127.0.0.1:8000/api/login',{
+            //             email:'ankit@gmail.com',
+            //             password:'password'
+            //         }).then(response =>{
+            //             console.log(response);
+            //    });
+
+            //     axios.get('http://127.0.0.1:8000/api/user',{
+            //                         }).then(response =>{
+            //                             console.log(response);
+            //                 });
+
+            // });
         }
     }
 

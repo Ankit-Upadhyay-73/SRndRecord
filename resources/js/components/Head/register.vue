@@ -29,6 +29,13 @@
 
                                         <v-row class="d-flex" dense style="display:flex;justify-content:center">
                                             <v-col cols="8">
+                                                <v-text-field  dense outlined label="Phone" color="black" v-model="head.phone" :rules="[() => !!head.phone || 'This field is required']">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+
+                                        <v-row class="d-flex" dense style="display:flex;justify-content:center">
+                                            <v-col cols="8">
                                                 <v-text-field dense outlined label="Email" color="black" v-model="head.email" :rules="[() => !!head.email || 'This field is required']">
                                                 </v-text-field>
                                             </v-col>
@@ -57,10 +64,11 @@
                                                 <v-btn text class="white--text text-capitalize mr-2" outlined style="background-color:black" @click="backLogin()">
                                                     <span style="font-family:Roboto">Login</span>
                                                 </v-btn>
-                                                <v-btn text class="white--text text-capitalize" outlined style="background-color:black">
+                                                <v-btn text class="white--text text-capitalize" outlined style="background-color:black" @click="onRegister()">
                                                     <span style="font-family:Roboto">Register</span>
                                                 </v-btn>
                                         </v-row>
+
 
                                     </form>
                                 </v-card-text>
@@ -75,17 +83,40 @@
 </template>
 
 <script>
+import axios from 'axios';
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://127.0.0.1:8000';
 
 export default ({
+
     data(){
         return{
-            head:{name:"",password:""}
+            head:{name:'',password:'',email:'',college:'',course:'',phone:''}
         }
     },
     methods:{
         backLogin()
         {
             this.$router.push({path:'/head/login'});
+        },
+        onRegister()
+        {
+            axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(() => {
+
+                    axios.post('http://127.0.0.1:8000/api/head/register',{
+                        name:this.head.name,
+                        email:this.head.email,
+                        college:this.head.college,
+                        course:this.head.course,
+                        password:this.head.password
+                        }). then(response => {
+
+                           console.log(response["data"]);
+
+                    });
+
+                });
         }
     }
 })

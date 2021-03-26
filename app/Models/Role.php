@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Subject extends Model
+class Role extends Model
 {
     use HasFactory;
 
-    public function courses()
+    public function users()
     {
-        return $this->belongsToMany(Course::class, 'course_subject');
+        return $this->hasMany(User::class);
     }
 }

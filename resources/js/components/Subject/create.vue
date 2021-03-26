@@ -21,24 +21,24 @@
 
                                         <v-row class="d-flex" dense style="display:flex;justify-content:center">
                                             <v-col cols="8">
-                                                <v-text-field dense outlined label="Name" color="black" v-model="subject.name">
+                                                <v-text-field dense outlined label="Name" color="black" v-model="subject.name" ty>
                                                 </v-text-field>
                                             </v-col>
                                         </v-row>
 
                                         <v-row class="d-flex" dense style="display:flex;justify-content:center">
                                             <v-col cols="6">
-                                                <v-text-field dense outlined label="weightage" color="black" v-model="subject.weightage">
+                                                <v-text-field dense outlined label="weightage" color="black" v-model="subject.weightage" type="number">
                                                 </v-text-field>
                                             </v-col>
                                             <v-col cols="6">
-                                                <v-text-field dense outlined label="Passing Mark" color="black" v-model="subject.passing">
+                                                <v-text-field dense outlined label="Passing Mark" color="black" v-model="subject.passing" type="number">
                                                 </v-text-field>
                                             </v-col>
                                         </v-row>
 
                                         <v-row class="d-flex" dense justify="center">
-                                                <v-btn text class="white--text text-capitalize" outlined style="background-color:black">
+                                                <v-btn text class="white--text text-capitalize" outlined style="background-color:black" v-on:click="addSubject()">
                                                     <span style="font-family:Roboto">Add</span>
                                                 </v-btn>
                                         </v-row>
@@ -57,13 +57,27 @@
 
 <script>
 
-export default({
+import Api from './../../../../Apis/Api'
 
+export default({
     data(){
         return{
 
             subject:{name:"",weightage:"",passing:""}
         }
+    },
+    methods:{
+
+        addSubject(){
+
+            console.log("isrunning");
+
+            Api.post('/subject',this.subject).then(data => {
+                console.log(data);
+            });
+
+        }
+
     }
 
 })

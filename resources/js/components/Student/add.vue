@@ -2,8 +2,22 @@
 
     <v-app>
         <v-main>
-
             <v-container>
+
+                        <v-row class="d-flex" dense >
+                            <v-dialog
+                                    v-model="isAdded"
+                                    width="400">
+                                <v-card>
+                                    <v-card-title class="headline grey lighten-2">
+                                        Added
+                                    </v-card-title>
+                                    <v-card-text>
+                                        {{responseMessage}}
+                                    </v-card-text>
+                                </v-card>
+                            </v-dialog>
+                        </v-row>
 
                 <v-row>
 
@@ -34,7 +48,8 @@
                                         </v-row>
 
                                         <v-row class="d-flex" dense justify="center">
-                                                <v-btn text class="white--text text-capitalize" outlined style="background-color:black">
+                                                <v-btn
+                                                     text class="white--text text-capitalize" outlined style="background-color:black" @click="onAddStudent()">
                                                     <span style="font-family:Roboto">Add</span>
                                                 </v-btn>
                                         </v-row>
@@ -53,12 +68,35 @@
 
 <script>
 
+import Api from '../../../../Apis/Api';
+
 export default({
 
     data(){
         return{
+            student:{name:"",email:"",password:"",phone:""},
+            isAdded:false,
+            responseMessage:'',
+        }
+    },
+    methods:{
+        onAddStudent()
+        {
+            Api.post('/student',this.student).then((data) =>{
+                console.log(data["data"]["message"]);
+                if(data["data"]["email"]==this.student.email)
+                {
+                    this.isAdded = true;
+                    this.responseMessage = "Saved Successfully"
+                    $router.push('/student');
+                }
+                else
+                    {
+                        this.responseMessage = data["data"]["message"];
+                    }
 
-            student:{name:"",email:""}
+            });
+
         }
     }
 

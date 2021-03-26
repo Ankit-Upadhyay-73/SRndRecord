@@ -4,7 +4,7 @@
                 <v-container>
 
                     <v-row>
-                        <v-col v-for="action in actions" :key="action.title" cols="4">
+                        <v-col v-for="action in actions" :key="action.title" cols="12" md="4">
                             <v-card>
                                 <v-card-title>
                                     {{action.title}}
@@ -31,8 +31,8 @@ export default {
     data() {
         return {
             actions:[
-                { title:'Student',Subtitle:'Student Operations',to:[{path:'/student/create',title:'Add'},{path:'/student/list',title:'List'}]},
-                { title:'Subject',Subtitle:'Subject Operations',to:[{path:'/subject/create',title:'Add'},{path:'/subject/list',title:'List'}]},
+                { title:'Student',Subtitle:'Student Operations',to:[{path:'/student/create',title:'Add'},{path:'/students',title:'List'}]},
+                { title:'Subject',Subtitle:'Subject Operations',to:[{path:'/subject/create',title:'Add'},{path:'/subjects',title:'List'}]},
                 { title:'Marksheet',Subtitle:'Create MarkSheet',to:[{path:'/marksheet/create',title:'Create'}]},
             ]
         };

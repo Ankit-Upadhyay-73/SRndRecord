@@ -7,10 +7,11 @@ import AddSubject from './resources/js/components/Subject/create';
 import ListSubject from './resources/js/components/Subject/list';
 import AddStudent from './resources/js/components/Student/add';
 import ListStudent from './resources/js/components/Student/list';
-import CreateMarksheet from './resources/js/components/Marksheet/create';
-import LayoutHeader from './resources/js/components/header';
-
+import createmarksheet from './resources/js/components/Marksheet/createmarksheet';
+import LayoutHeader from './resources/js/components/layout-header';
+import vavtaruploader from './resources/js/components/vavtaruploader';
 export default {
+    'layout-header': LayoutHeader,
     'Actions': Actions,
     'Welcome': Welcome,
     'Login': Login,
@@ -19,6 +20,6 @@ export default {
     'ListSubject': ListSubject,
     'AddStudent': AddStudent,
     'ListStudent': ListStudent,
-    'CreateMarksheet': CreateMarksheet,
-    'LayoutHeader': LayoutHeader
+    'createmarksheet': createmarksheet,
+    'vavtaruploader': vavtaruploader
 }

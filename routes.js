@@ -6,8 +6,10 @@ import AddSubject from './resources/js/components/Subject/create';
 import ListSubject from './resources/js/components/Subject/list';
 import AddStudent from './resources/js/components/Student/add';
 import ListStudent from './resources/js/components/Student/list';
-import CreateMarksheet from './resources/js/components/Marksheet/create';
+import createmarksheet from './resources/js/components/Marksheet/createmarksheet';
+import logout from './resources/js/components/logout';
 import Actions from './resources/js/components/actions';
+
 export default
     {
 
@@ -50,15 +52,16 @@ export default
 
             {
                 path: '/marksheet/create',
-                component: CreateMarksheet
+                component: createmarksheet
             },
 
             {
                 path: '/actions',
                 component: Actions
             },
-
-
-
+            {
+                path: '/logout',
+                component: logout
+            }
         ]
     }

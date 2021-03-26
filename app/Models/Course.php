@@ -8,4 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
     use HasFactory;
+
+    protected $hidden = ["pivot"];
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'course_subject');
+    }
+
+    public function colleges()
+    {
+        return $this->belongsToMany(College::class, 'college_course');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'course_user');
+    }
 }

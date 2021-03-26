@@ -1,5 +1,6 @@
 <?php
 
+use Facade\Ignition\Tabs\Tab;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +16,12 @@ class CreateCoursesTable extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer("duration");
+            $table->string('name')->unique();
+            $table->integer("duration")->default(NULL);
             $table->timestamps();
         });
 
-        Schema::create('subject_course', function (Blueprint $table) {
+        Schema::create('course_subject', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('subject_id');
             $table->unsignedBigInteger('course_id');
@@ -29,13 +30,12 @@ class CreateCoursesTable extends Migration
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
 
-        Schema::create('student_course', function (Blueprint $table) {
+        Schema::create('course_user', function (Blueprint $table) {
+
             $table->id();
-            $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('course_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
-            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
-            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
         });
     }
 

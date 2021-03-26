@@ -1,7 +1,11 @@
 <?php
 
+use Facade\FlareClient\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Cookie as HttpFoundationCookie;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +18,36 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//route for Registration
+Auth::routes();
+
+//Head Operations
+
+Route::post('/user/registration', 'UserController@register');
+Route::post('/user/login', 'UserController@login')->middleware('auth:sanctum');
+
+//Student Operations
+
+Route::post('/student', 'StudentController@add')->middleware('auth:sanctum');
+Route::get('/students', 'StudentController@index')->middleware('auth:sanctum');
+Route::get('/student/{id}', 'StudentController@show');
+//Subject Operations
+
+Route::post('/subject', 'SubjectController@store')->middleware('auth:sanctum');
+Route::get('/subjects', 'SubjectController@index')->middleware('auth:sanctum');
 
 
+//MarkSheet Operations
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+Route::post('/marksheet/create', 'ResultController@create')->middleware('auth:sanctum');
+
+//fetch subjects with Course
+
+Route::get('/fetchSubjectsWithCourse', 'SubjectController@fetchSubjectsWithCourse');
+
+Route::get('/user', function (Request $request) {
     return $request->user();
-});
+})->middleware('auth:sanctum');
+
+Route::post('/logout', function (Request $request) {
+    $request->session()->invalidate();
+})->middleware('auth:sanctum');

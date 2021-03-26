@@ -15,17 +15,13 @@ class CreateMarksTable extends Migration
     {
         Schema::create('marks', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('subject_id');
-            $table->integer('obtabinedMarks');
-            $table->timestamps();
-        });
-
-        Schema::create('student_mark', function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('mark_id');
+            $table->unsignedBigInteger('subject_id');
+            $table->integer('obtabinedMarks');
+            $table->integer('total');
             $table->timestamps();
-            $table->foreign('mark_id')->references('id')->on('marks')->onDelete('cascade');
+            $table->foreign("student_id")->references("id")->on("students")->onDelete("cascade");
+            $table->foreign("subject_id")->references("id")->on("subjects")->onDelete("cascade");
         });
     }
 

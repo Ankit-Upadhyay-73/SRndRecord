@@ -26,10 +26,15 @@
     </style>
 
 </head>
+
 <body>
 
     <div id="app">
-        <router-view></router-view>
+
+        <layout-header>
+            <router-view></router-view>
+        </layout-header>
+
     </div>
 
     <script src="/js/app.js"></script>
