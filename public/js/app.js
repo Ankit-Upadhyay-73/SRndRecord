@@ -1903,7 +1903,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   register: function register(form) {
-    return _Api__WEBPACK_IMPORTED_MODULE_0__.default.post('/register', form);
+    return _Api__WEBPACK_IMPORTED_MODULE_0__.default.post('/user/registration', form);
   },
   login: function login(form) {
     return _Api__WEBPACK_IMPORTED_MODULE_0__.default.post('/login', form);
@@ -2095,9 +2095,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-//
+/* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../../../Apis/User */ "./Apis/User.js");
 //
 //
 //
@@ -2182,8 +2180,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
-(axios__WEBPACK_IMPORTED_MODULE_0___default().defaults.withCredentials) = true;
-(axios__WEBPACK_IMPORTED_MODULE_0___default().defaults.baseURL) = 'http://127.0.0.1:8000';
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -2206,16 +2202,19 @@ __webpack_require__.r(__webpack_exports__);
     onRegister: function onRegister() {
       var _this = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_0___default().get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(function () {
-        axios__WEBPACK_IMPORTED_MODULE_0___default().post('http://127.0.0.1:8000/api/head/register', {
-          name: _this.head.name,
-          email: _this.head.email,
-          college: _this.head.college,
-          course: _this.head.course,
-          password: _this.head.password
-        }).then(function (response) {
-          console.log(response["data"]);
-        });
+      _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.register(this.head).then(function (data) {
+        if (data.status == 201) {
+          _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.login({
+            "email": _this.head.email,
+            "password": _this.head.password
+          }).then(function (data) {
+            if (data.status == 204) {
+              _this.$emit('loggedout', false);
+
+              _this.$router.push('/actions');
+            }
+          });
+        }
       });
     }
   }
@@ -2236,6 +2235,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Apis_Api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../../../Apis/Api */ "./Apis/Api.js");
 /* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../../../Apis/User */ "./Apis/User.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -2307,6 +2308,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'createmarksheet',
   data: function data() {
@@ -2345,8 +2347,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           if (subject.obtained > subject.total) {
             console.log("Subject marks can't be greater than total Marks " + subject.name);
           } else {
-            _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.post('/marksheet/create', this.subjects).then(function (data) {
-              console.log(data);
+            // Api.post('/marksheet/create',this.subjects).then((data)=>{
+            //     console.log(data);
+            // });
+            // Api.get('/marksheet/print',).then(data => {
+            // })
+            axios__WEBPACK_IMPORTED_MODULE_2___default()({
+              url: 'http://127.0.0.1:8000/api/marksheet/create',
+              data: this.subjects,
+              method: 'POST',
+              responseType: 'blob'
+            }).then(function (response) {
+              var url = window.URL.createObjectURL(new Blob([response.data]));
+              var link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'result.pdf');
+              document.body.appendChild(link);
+              link.click();
             });
           }
         }
@@ -2866,7 +2883,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'layout-header',
@@ -2883,17 +2899,22 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
+    //first fetch session and then send requets to server for fetching users details
     _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.fetchUser().then(function (data) {
       if (data["data"] != undefined) {
-        console.log(data["data"]); // this.$router.push({path:'/actions'});
+        _this.$router.push({
+          path: '/actions'
+        });
 
         _this.showLoginRegisterMenu = false;
         _this.uname = data["data"]["name"];
       }
+    })["catch"](function (error) {
+      if (error.response.status == 401) {}
     });
   },
   methods: {
-    onLoginClicked: function onLoginClicked() {
+    onLoginClicked: function onLoginClicked($event) {
       $router.push({
         path: '/head/login'
       });
@@ -2902,6 +2923,9 @@ __webpack_require__.r(__webpack_exports__);
       $router.push({
         path: '/head/register'
       });
+    },
+    onLoggedOutClickced: function onLoggedOutClickced() {
+      console.log("Event Fired");
     }
   }
 });
@@ -3248,17 +3272,13 @@ __webpack_require__.r(__webpack_exports__);
       showLoginRegisterMenu: true
     };
   },
-  created: function created() {
-    var _this = this;
-
-    _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.fetchUser().then(function (data) {
-      if (data["data"] != undefined) {
-        _this.$router.push({
-          path: '/actions'
-        });
-      } // this.$router.push({path:'/actions'});
-
-    });
+  created: function created() {// User.fetchUser().then(data => {
+    //     if(data["data"]!=undefined)
+    //     {
+    //           this.$router.push({path:'/actions'});
+    //     }
+    //     // this.$router.push({path:'/actions'});
+    // });
   },
   methods: {}
 });
@@ -3289,7 +3309,7 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_3__.default.use((vuetify__WEBPACK_IMPORTED_MODULE_4___default()));
 vue__WEBPACK_IMPORTED_MODULE_3__.default.use(vue_router__WEBPACK_IMPORTED_MODULE_5__.default); //Vue.use(axios);
 
-new vue__WEBPACK_IMPORTED_MODULE_3__.default({
+var vapp = new vue__WEBPACK_IMPORTED_MODULE_3__.default({
   el: "#app",
   components: _components__WEBPACK_IMPORTED_MODULE_1__.default,
   router: new vue_router__WEBPACK_IMPORTED_MODULE_5__.default(_routes__WEBPACK_IMPORTED_MODULE_0__.default),
@@ -7347,7 +7367,7 @@ var render = function() {
                       },
                       on: {
                         loggedout: function($event) {
-                          _vm.showLoginRegisterMenu = $event
+                          return _vm.onLoggedOutClickced($event)
                         },
                         click: function($event) {
                           return _vm.$router.push({ path: "/head/login" })
@@ -7369,7 +7389,7 @@ var render = function() {
                       },
                       on: {
                         loggedout: function($event) {
-                          _vm.showLoginRegisterMenu = $event
+                          return _vm.onLoggedOutClickced($event)
                         },
                         click: function($event) {
                           return _vm.$router.push({ path: "/head/register" })
@@ -7383,9 +7403,9 @@ var render = function() {
             1
           ),
           _vm._v(" "),
-          _vm._t("default")
+          _c("router-view")
         ],
-        2
+        1
       )
     ],
     1

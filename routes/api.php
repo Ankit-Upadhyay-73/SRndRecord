@@ -30,6 +30,7 @@ Route::post('/user/login', 'UserController@login')->middleware('auth:sanctum');
 Route::post('/student', 'StudentController@add')->middleware('auth:sanctum');
 Route::get('/students', 'StudentController@index')->middleware('auth:sanctum');
 Route::get('/student/{id}', 'StudentController@show');
+
 //Subject Operations
 
 Route::post('/subject', 'SubjectController@store')->middleware('auth:sanctum');
@@ -38,7 +39,11 @@ Route::get('/subjects', 'SubjectController@index')->middleware('auth:sanctum');
 
 //MarkSheet Operations
 
-Route::post('/marksheet/create', 'ResultController@create')->middleware('auth:sanctum');
+Route::post('/marksheet/create', 'ResultController@createMarksheetPDF')
+// ->middleware('auth:sanctum')
+;
+
+Route::get('/marksheet/print','ResultController@createMarksheetPDF');
 
 //fetch subjects with Course
 

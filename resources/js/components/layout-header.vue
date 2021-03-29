@@ -24,15 +24,14 @@
                     </v-menu>
 
 
-                    <v-btn  v-if="showLoginRegisterMenu" v-on:loggedout="showLoginRegisterMenu=$event" style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click="$router.push({path:'/head/login'});">
+                    <v-btn  v-if="showLoginRegisterMenu" v-on:loggedout="onLoggedOutClickced($event)" style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click="$router.push({path:'/head/login'});">
                         Login
                     </v-btn>
-                    <v-btn v-if="showLoginRegisterMenu" v-on:loggedout="showLoginRegisterMenu=$event" style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click=" $router.push({path:'/head/register'});">
+                    <v-btn v-if="showLoginRegisterMenu" v-on:loggedout="onLoggedOutClickced($event)" style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click=" $router.push({path:'/head/register'});">
                         Register
                     </v-btn>
-
                 </v-app-bar>
-                <slot></slot>
+                <router-view></router-view>
             </v-main>
         </v-app>
 </template>
@@ -51,18 +50,26 @@ export default({
             }
         },
     created(){
-            User.fetchUser().then(data => {
+
+            //first fetch session and then send requets to server for fetching users details
+
+            User.fetchUser().
+            then(data => {
                 if(data["data"]!=undefined)
                 {
-                    console.log(data["data"]);
-                    // this.$router.push({path:'/actions'});
+                    this.$router.push({path:'/actions'});
                     this.showLoginRegisterMenu = false;
                     this.uname =  data["data"]["name"];
+                }
+            }).
+            catch(error=>{
+                if(error.response.status==401){
+                    
                 }
             });
     },
     methods:{
-            onLoginClicked()
+            onLoginClicked($event)
             {
                 $router.push({path:'/head/login'});
             },
@@ -70,7 +77,12 @@ export default({
             onRegisterClicked()
             {
                $router.push({path:'/head/register'});
+            },
+
+            onLoggedOutClickced(){
+                console.log("Event Fired");
             }
+
     }
 })
 </script>

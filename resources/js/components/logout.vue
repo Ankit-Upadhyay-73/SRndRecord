@@ -29,6 +29,7 @@ export default ({
         Api.post('/logout').then((data)=>{
             console.log(data);
             this.$emit('loggedout',true);
+            
         });
     }
 })

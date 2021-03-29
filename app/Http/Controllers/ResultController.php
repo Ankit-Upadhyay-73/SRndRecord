@@ -6,17 +6,15 @@ use App\Models\Exam;
 use App\Models\Mark;
 use App\Models\Result;
 use Illuminate\Http\Request;
+use PDF;
 
 class ResultController extends Controller
 {
     //
-
     public function create(Request $request)
     {
-        return $request->all();
-        //fetching data from request
+        return $this->createMarksheetPDF();
         $student =  $request->student;
-
         //store all Subjects details with Obtained Marks
         $obtainedMarks = [];
         $weightages = [];
@@ -61,7 +59,11 @@ class ResultController extends Controller
             'percentage' => $percentage
         ]);
 
-        return response()->json(["message" => "Result Created Successfully"]);
+
+        
+
+        // return response()->json(["message" => "Result Created Successfully"]);
+
     }
 
     public function addExam(Request $request)
@@ -100,5 +102,19 @@ class ResultController extends Controller
         array_push($dataSet, $weightages);
         array_push($dataSet, $obtainedMarks);
         return $dataSet;
+
     }
+
+    public function createMarksheetPDF(){
+
+      $data = [
+          'title' => 'First PDF for Medium',
+          'heading' => 'Hello from 99Points.info',
+            ];
+
+        $pdf = PDF::loadView('CreatePDF', $data);  
+        return $pdf->download('medium.pdf');
+
+      }
 }
+

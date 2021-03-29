@@ -24,14 +24,14 @@ import User from '../../../Apis/User'
             };
         },
         created(){
-            User.fetchUser().then(data => {
-                if(data["data"]!=undefined)
-                {
-                      this.$router.push({path:'/actions'});
-                }
+            // User.fetchUser().then(data => {
+            //     if(data["data"]!=undefined)
+            //     {
+            //           this.$router.push({path:'/actions'});
+            //     }
 
-                // this.$router.push({path:'/actions'});
-            });
+            //     // this.$router.push({path:'/actions'});
+            // });
         },
         methods:{
 

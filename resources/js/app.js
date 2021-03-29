@@ -10,7 +10,7 @@ Vue.use(VueRouter);
 //Vue.use(axios);
 
 
-new Vue({
+var vapp = new Vue({
     el: "#app",
     components: components,
     router: new VueRouter(routes),

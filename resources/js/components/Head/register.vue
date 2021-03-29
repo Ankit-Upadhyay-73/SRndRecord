@@ -69,7 +69,6 @@
                                                 </v-btn>
                                         </v-row>
 
-
                                     </form>
                                 </v-card-text>
                             </v-card>
@@ -83,10 +82,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://127.0.0.1:8000';
+import User from './../../../../Apis/User'
 
 export default ({
 
@@ -102,21 +99,16 @@ export default ({
         },
         onRegister()
         {
-            axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie').then(() => {
-
-                    axios.post('http://127.0.0.1:8000/api/head/register',{
-                        name:this.head.name,
-                        email:this.head.email,
-                        college:this.head.college,
-                        course:this.head.course,
-                        password:this.head.password
-                        }). then(response => {
-
-                           console.log(response["data"]);
-
+            User.register(this.head).then((data)=>{
+                if(data.status==201){
+                    User.login({"email":this.head.email,"password":this.head.password}).then((data)=>{
+                        if(data.status==204){
+                            this.$emit('loggedout',false);
+                            this.$router.push('/actions');
+                        }
                     });
-
-                });
+                }
+            });
         }
     }
 })

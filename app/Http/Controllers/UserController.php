@@ -17,7 +17,6 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-
         // if (User::where('phone', $request->phone)->exists())
         //     return response()->json(["message" => "Phone already exists"])->setStatusCode(400);
 
@@ -55,7 +54,7 @@ class UserController extends Controller
         // return response()->json($user, 201);;
 
 
-        $isAlreadyExists = User::where('phone', $request->phone)->get()->count();
+        $isAlreadyExists = User::where('phone', $request->phone)->orWhere('email',$request->email)->get()->count();
 
         if ($isAlreadyExists != 0)
             return 0;
@@ -116,12 +115,12 @@ class UserController extends Controller
     public function createRole(Request $request)
     {
         //finding the role
-        $role = Role::where("name", $request->role)->get();
+        $role = Role::where("name", "Head")->get();
         //finding the role
         if ($role->count() == 0) {
             $role = new Role();
-            $role->name = $request->role;
-            $role->display_name = Str::upper($request->role);
+            $role->name = "Head";
+            $role->display_name = Str::upper("Head");
             $role->save();
             return $role->id;
         } else

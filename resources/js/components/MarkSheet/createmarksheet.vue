@@ -65,6 +65,7 @@
 
 import Api from './../../../../Apis/Api'
 import User from './../../../../Apis/User'
+import axios from 'axios'
 export default({
     name:'createmarksheet',
     data(){
@@ -102,9 +103,27 @@ export default({
                     console.log("Subject marks can't be greater than total Marks "+subject.name);
                 }
                 else{
-                    Api.post('/marksheet/create',this.subjects).then((data)=>{
-                        console.log(data);
+                    // Api.post('/marksheet/create',this.subjects).then((data)=>{
+                    //     console.log(data);
+                    // });
+                    // Api.get('/marksheet/print',).then(data => {
+                        
+                    // })
+
+                    axios({
+                        url:'http://127.0.0.1:8000/api/marksheet/create',
+                        data: this.subjects,
+                        method:'POST',
+                        responseType: 'blob'
+                    }).then((response)=>{
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a')
+                        link.href = url
+                        link.setAttribute('download','result.pdf')
+                        document.body.appendChild(link)
+                        link.click()
                     });
+
                 }
             }
 

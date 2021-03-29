@@ -32,7 +32,7 @@
     <div id="app">
 
         <layout-header>
-            <router-view></router-view>
+            
         </layout-header>
 
     </div>
