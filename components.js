@@ -9,7 +9,6 @@ import AddStudent from './resources/js/components/Student/add';
 import ListStudent from './resources/js/components/Student/list';
 import createmarksheet from './resources/js/components/Marksheet/createmarksheet';
 import LayoutHeader from './resources/js/components/layout-header';
-import vavtaruploader from './resources/js/components/vavtaruploader';
 export default {
     'layout-header': LayoutHeader,
     'Actions': Actions,
@@ -21,5 +20,4 @@ export default {
     'AddStudent': AddStudent,
     'ListStudent': ListStudent,
     'createmarksheet': createmarksheet,
-    'vavtaruploader': vavtaruploader
 }

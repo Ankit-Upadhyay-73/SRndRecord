@@ -68,7 +68,8 @@
 
 <script>
 
-import Api from '../../../../Apis/Api';
+import User from './../../../../Apis/User';
+import Api from './../../../../Apis/Api';;
 
 export default({
 
@@ -79,6 +80,13 @@ export default({
             responseMessage:'',
         }
     },
+    mounted(){
+
+        User.fetchUser().then((user)=>{
+            console.log(user);
+        });
+
+    },
     methods:{
         onAddStudent()
         {
@@ -88,7 +96,7 @@ export default({
                 {
                     this.isAdded = true;
                     this.responseMessage = "Saved Successfully"
-                    $router.push('/student');
+                    this.$router.push('/student');
                 }
                 else
                     {
@@ -96,7 +104,6 @@ export default({
                     }
 
             });
-
         }
     }
 

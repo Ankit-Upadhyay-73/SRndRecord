@@ -80,11 +80,12 @@ class StudentController extends Controller
     public function show(Request $request, $id)
     {
         $course_id = $request->user()->courses[0]->id;
-        return $studentname = User::find($id);
-        $student  = Student::where(['id' => $id, 'course_id' => $course_id])->count();
+        // return $studentname = User::find($id);
+        $student  = Student::where(['id' => $id, 'course_id' => $course_id])->get();
+        $user_id  = $student[0]->user_id;
         $studentname = "Not Found";
-        if ($student > 0)
-            $studentname = User::find($id)->get();
-        return $studentname;
+        if ($student->count() > 0)
+            $studentname = User::find($user_id);
+        return response()->json($studentname);
     }
 }

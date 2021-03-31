@@ -24,7 +24,7 @@ Auth::routes();
 
 Route::post('/user/registration', 'UserController@register');
 Route::post('/user/login', 'UserController@login')->middleware('auth:sanctum');
-
+Route::post('/college/update', 'CollegeController@update');
 //Student Operations
 
 Route::post('/student', 'StudentController@add')->middleware('auth:sanctum');
@@ -39,11 +39,9 @@ Route::get('/subjects', 'SubjectController@index')->middleware('auth:sanctum');
 
 //MarkSheet Operations
 
-Route::post('/marksheet/create', 'ResultController@createMarksheetPDF')
-// ->middleware('auth:sanctum')
-;
+Route::post('/marksheet/create', 'ResultController@create')->middleware('auth:sanctum');
 
-Route::get('/marksheet/print','ResultController@createMarksheetPDF');
+Route::get('/marksheet/print', 'ResultController@createMarksheetPDF');
 
 //fetch subjects with Course
 
@@ -51,8 +49,4 @@ Route::get('/fetchSubjectsWithCourse', 'SubjectController@fetchSubjectsWithCours
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
-
-Route::post('/logout', function (Request $request) {
-    $request->session()->invalidate();
 })->middleware('auth:sanctum');

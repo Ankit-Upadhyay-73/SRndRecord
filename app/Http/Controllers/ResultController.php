@@ -13,28 +13,29 @@ class ResultController extends Controller
     //
     public function create(Request $request)
     {
-        return $this->createMarksheetPDF();
         $student =  $request->student;
+
         //store all Subjects details with Obtained Marks
         $obtainedMarks = [];
         $weightages = [];
         $passingInEach = [];
-        $data = $this->addToMarks($request, $obtainedMarks, $weightages, $passingInEach);
-        $obtainedMarks = $data[0];
+        $data = $this->addToMarks($request, $passingInEach, $weightages, $obtainedMarks);
+        return sizeof($request->$obtainedMarks);
+        $passingInEach = $data[0];
         $weightages = $data[1];
-        $passingInEach = $data[2];
+        $obtainedMarks = $data[2];
 
         $exam = Exam::where("name", $request->exam)->get();
         if ($exam->count() == 0)
             $examid = $this->addExam($request);
         else
-            $examid = $request->exam;
+            $examid = $exam[0]->id;
 
         //variales to  create final result
         $totalObtained = 0;
         $totalWeightage = 0;
         $totalPassing = 0;
-        $result = "";
+        $result = true;
 
         for ($i = 0; $i < sizeOf($obtainedMarks); $i++) {
             $totalObtained += $obtainedMarks[$i];
@@ -42,15 +43,17 @@ class ResultController extends Controller
             $totalPassing += $passingInEach[$i];
 
             if ($obtainedMarks[$i] < $weightages[$i])
-                $result = "Fail";
+                $result = false;
         }
 
         //calculate result
         $percentage = ($totalObtained / $totalWeightage) * 100;
-        if ($totalObtained < $totalPassing)
-            $result = "Fail";
-        else
-            $request = "Pass";
+        if ($request) {
+            if ($totalObtained < $totalPassing)
+                $result = false;
+            else
+                $request = true;
+        }
 
         Result::create([
             'student_id' => $student,
@@ -60,10 +63,7 @@ class ResultController extends Controller
         ]);
 
 
-        
-
-        // return response()->json(["message" => "Result Created Successfully"]);
-
+        return response()->json(["message" => "Result Created Successfully"]);
     }
 
     public function addExam(Request $request)
@@ -83,38 +83,40 @@ class ResultController extends Controller
 
             $mark = $subject["obtained"];
             $passing = $subject["passing"];
-            $weightage = $subject["weightage"];
+            $weightage = $subject["total"];
 
             //pushing data in array to create result
             array_push($passingInEach, $passing);
             array_push($weightages, $weightage);
             array_push($obtainedMarks, $mark);
 
-            //adding record to marks table
-            // Mark::create([
-            //     'student_id' => $request->student,
-            //     'subject_id' => $subject["id"],
-            //     'obtabinedMarks' => $mark,
-            //     'total' => $weightage
-            // ]);
+            // adding record to marks table
+            Mark::create([
+                'student_id' => $request->student,
+                'subject_id' => $subject["id"],
+                'obtabinedMarks' => $mark,
+                'total' => $weightage
+            ]);
         }
         array_push($dataSet, $passingInEach);
         array_push($dataSet, $weightages);
         array_push($dataSet, $obtainedMarks);
         return $dataSet;
-
     }
 
-    public function createMarksheetPDF(){
+    public function createMarksheetPDF()
+    {
 
-      $data = [
-          'title' => 'First PDF for Medium',
-          'heading' => 'Hello from 99Points.info',
-            ];
+        // return view('CreatePDF');
 
-        $pdf = PDF::loadView('CreatePDF', $data);  
+        $data = [
+            'title' => 'First PDF for Medium',
+            'heading' => 'Hello from 99Points.info',
+        ];
+
+
+        $pdf = PDF::loadView('CreatePDF', $data);
+
         return $pdf->download('medium.pdf');
-
-      }
+    }
 }
-

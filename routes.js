@@ -9,7 +9,7 @@ import ListStudent from './resources/js/components/Student/list';
 import createmarksheet from './resources/js/components/Marksheet/createmarksheet';
 import logout from './resources/js/components/logout';
 import Actions from './resources/js/components/actions';
-
+import profile from './resources/js/components/Head/profile'
 export default
     {
 
@@ -62,6 +62,10 @@ export default
             {
                 path: '/logout',
                 component: logout
+            },
+            {
+                path: '/profile',
+                component: profile
             }
         ]
     }

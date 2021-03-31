@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import User from '../../../Apis/User'
+import User from './../../../Apis/User'
     export default {
         data() {
             return {
@@ -27,7 +27,8 @@ import User from '../../../Apis/User'
             // User.fetchUser().then(data => {
             //     if(data["data"]!=undefined)
             //     {
-            //           this.$router.push({path:'/actions'});
+            //             this.$router.push({path:'/actions'});
+            //             this.$emit("loggedin",true);
             //     }
 
             //     // this.$router.push({path:'/actions'});

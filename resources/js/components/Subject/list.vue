@@ -13,7 +13,7 @@
 
 
 <script>
-import Api from '../../../../Apis/Api';
+import Api from './../../../../Apis/Api';
             export default {
                 data () {
                   return {

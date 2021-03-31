@@ -30,7 +30,7 @@
 
                                         <v-row class="d-flex" dense style="display:flex;justify-content:center">
                                             <v-col cols="8">
-                                                <v-text-field dense outlined  label="Password" color="black" v-model="head.password"  :rules="[() => !!head.password || 'This field is required']" >
+                                                <v-text-field dense outlined type="password" label="Password" color="black" v-model="head.password"  :rules="[() => !!head.password || 'This field is required']" >
                                                 </v-text-field>
                                                 <span class="text-danger" v-if="errors.password">
                                                     {{errors.password[0]}}
@@ -61,8 +61,9 @@
 
 <script>
 
-import User from '../../../../Apis/User';
-import CSRF from '../../../../Apis/CSRF';
+import User from './../../../../Apis/User';
+import CSRF from './../../../../Apis/CSRF';
+import axios from 'axios';
 export default ({
     data(){
         return{
@@ -96,14 +97,15 @@ export default ({
 
             //     axios.post('http://127.0.0.1:8000/api/login',{
             //             email:'ankit@gmail.com',
-            //             password:'password'
+            //             password:'00000000'
             //         }).then(response =>{
             //             console.log(response);
             //    });
 
             //     axios.get('http://127.0.0.1:8000/api/user',{
             //                         }).then(response =>{
-            //                             console.log(response);
+            //                           this.$router.push('/actions');
+            //                         //   this.$emit('loggedin',true);
             //                 });
 
             // });

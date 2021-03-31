@@ -2,6 +2,7 @@
         <v-app>
             <v-main>
                 <v-app-bar style="background-color: black">
+
                     <v-toolbar-title class="justify-center" style="font-family: Comic Sans MS;color:white">
                         MarkSheet
                     </v-toolbar-title>
@@ -18,20 +19,19 @@
                             </template>
                             <v-list>
                                 <v-list-item v-for="(item, index) in items" :key="index">
-                                    <v-list-item-title @click="$router.push('/logout')">{{ item.title }}</v-list-item-title>
+                                    <v-list-item-title @click="$router.push('/profile')">{{ item.title }}</v-list-item-title>
                                 </v-list-item>
                             </v-list>
                     </v-menu>
 
-
-                    <v-btn  v-if="showLoginRegisterMenu" v-on:loggedout="onLoggedOutClickced($event)" style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click="$router.push({path:'/head/login'});">
+                    <v-btn  v-if="showLoginRegisterMenu"    style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click="$router.push({path:'/head/login'});">
                         Login
                     </v-btn>
-                    <v-btn v-if="showLoginRegisterMenu" v-on:loggedout="onLoggedOutClickced($event)" style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click=" $router.push({path:'/head/register'});">
+                    <v-btn v-if="showLoginRegisterMenu"     style="background-color:black;font-family:Comic Sans MS" class="white--text text-capitalize text-bold" v-on:click=" $router.push({path:'/head/register'});">
                         Register
                     </v-btn>
                 </v-app-bar>
-                <router-view></router-view>
+                <router-view @loggedin="onLoggedIn"></router-view>
             </v-main>
         </v-app>
 </template>
@@ -43,13 +43,21 @@ export default({
     data(){
         return {
                 showLoginRegisterMenu:true,
+                drawerState:false,
                 uname : "",
                 items: [
                         { title: 'LogOut', path:'/logout'},
+                        { title: 'Profile',path:'/profile'}
                     ],
+                actions:[
+                            { title:'Student',Subtitle:'Student Operations',to:[{path:'/student/create',title:'Add'},{path:'/students',title:'List'}]},
+                            { title:'Subject',Subtitle:'Subject Operations',to:[{path:'/subject/create',title:'Add'},{path:'/subjects',title:'List'}]},
+                            { title:'Marksheet',Subtitle:'Create MarkSheet',to:[{path:'/marksheet/create',title:'Create'}]},
+                        ]
             }
         },
     created(){
+
 
             //first fetch session and then send requets to server for fetching users details
 
@@ -64,11 +72,18 @@ export default({
             }).
             catch(error=>{
                 if(error.response.status==401){
-                    
+
                 }
             });
     },
     methods:{
+
+            onLoggedIn(data){
+
+                this.showLoginRegisterMenu = !data;
+
+            },
+
             onLoginClicked($event)
             {
                 $router.push({path:'/head/login'});
@@ -78,10 +93,6 @@ export default({
             {
                $router.push({path:'/head/register'});
             },
-
-            onLoggedOutClickced(){
-                console.log("Event Fired");
-            }
 
     }
 })

@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,84 +8,94 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{asset('css/app.css')}}">
     <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        *{
+            font-family: 'Times New Roman', Times, serif;
+        }
+    </style>
 
 </head>
 
 <body>
-    
 
     {{-- creating header of MarkSheet --}}
 
-    <div class="container" id="mainContainer">
+    <div class="row" style="justify-content:center">
+
+        <h3 style="font-family: Comic Sans MS">
+            Marksheet of stud_name
+        </h3>
+
+    </div>
+
+    <div class="container mt-5 shadow-lg p-5" id="mainContainer">
 
         <div class="row">
 
             <div class="col-2" >
-                {{-- <img src="{{$college->src}}" alt="Marksheet Values"> --}}
+                <img src="http://www.avc.ac.in/images/logo.png" alt="Marksheet Values">
             </div>
 
             <div class="col-10">
 
-                <div class="row">
-                    {{-- collegeName Here --}}
+                <div class="row" style="justify-content: center">
+
+                    <h3 style="font-family: 'Times New Roman', Times, serif;">Annasaheb Vartak College</h3>
 
                 </div>
 
-                <div class="row">
+                <div class="row mt-2">
 
                     <div class="col-6">
-                        {{-- address --}}
+                        Address : Vasai Road
                     </div>
 
                     <div class="col-6">
-                        {{-- grade with other rewards --}}
+                        Grade Obtained : B+
                     </div>
 
                 </div>
-                
-                <div class="row">
-                    
+
+                <div class="row mt-2">
+
                     <div class="col-4">
 
-                        {{-- phone number --}}
+                        Contact: +91-0220220220220
 
                     </div>
 
                     <div class="col-4">
 
-                        {{-- Email --}}
+                        Email: enquiry@vartak.com
 
                     </div>
 
                     <div class="col-4">
 
-                        {{-- Website --}}
+                        Website: http://www.avc.ac.in
 
                     </div>
 
                 </div>
             </div>{{-- end of col-10 --}}
-            
+
         </div> {{-- end of row --}}
 
         {{-- student Details --}}
-        <div class="row">
+        <div class="row mt-4">
 
-            <div class="row">
-                {{-- row for student Name --}}
+            <div class="col" >
+                Name:Ankit Upadhyay
             </div>
-            
-            <div class="row">
+            <div class="col" >
+                Roll N0: 73
+            </div>
+            <div class="col" >
+                Stream: BScIT
+            </div>
 
-                <div class="col-3">
-                    {{-- Roll No --}}
-                </div>
-
-                <div class="col-3">
-                    {{-- Stream --}}
-                </div>
-
-            </div> 
         </div>    {{-- end of student personal info --}}
 
         {{-- Now Subject with Grade --}}
@@ -111,7 +121,7 @@
                     </tr>
 
                 {{-- @endforeach --}}
-    
+
             </table>
 
             <div class="divider"></div>
@@ -139,7 +149,7 @@
         </div>            {{-- end of Result Section --}}
 
         <div class="row">
-            {{-- Marks Obtained --}} 
+            {{-- Marks Obtained --}}
         </div> {{-- to show the marks and % with respect to total --}}
 
         <div class="row justify-content-end">
@@ -149,11 +159,14 @@
         </div>
 
     </div>
-    
-    
+
+
 </body>
 
-</html> -->
+</html>
+
+
+<!--
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,6 +176,8 @@
     <title>Document</title>
 </head>
 <body>
-    <layout-header></layout-header>
+
 </body>
 </html>
+
+-->
