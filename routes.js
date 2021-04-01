@@ -8,7 +8,7 @@ import AddStudent from './resources/js/components/Student/add';
 import ListStudent from './resources/js/components/Student/list';
 import createmarksheet from './resources/js/components/Marksheet/createmarksheet';
 import logout from './resources/js/components/logout';
-import Actions from './resources/js/components/actions';
+import home from './resources/js/components/home';
 import profile from './resources/js/components/Head/profile'
 export default
     {
@@ -56,8 +56,8 @@ export default
             },
 
             {
-                path: '/actions',
-                component: Actions
+                path: '/home',
+                component: home
             },
             {
                 path: '/logout',

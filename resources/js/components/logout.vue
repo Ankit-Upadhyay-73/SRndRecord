@@ -17,7 +17,7 @@
 
 <script>
 
-import Api from './../../../Apis/Api'
+import Api from './../Apis/Api'
 export default ({
     data(){
         return{
@@ -27,8 +27,9 @@ export default ({
     mounted()
     {
         var _nuxt = this;
-        Api.post('/logout').then((data)=>{
+        Api.post('/api/logout').then((data)=>{
             _nuxt.$emit('loggedin',false);
+            this.$router.push('/head/login');
         });
     }
 })

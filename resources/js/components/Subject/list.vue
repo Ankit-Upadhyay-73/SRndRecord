@@ -13,7 +13,7 @@
 
 
 <script>
-import Api from './../../../../Apis/Api';
+import Api from './../../Apis/Api';
             export default {
                 data () {
                   return {
@@ -32,7 +32,7 @@ import Api from './../../../../Apis/Api';
                 },
                 created(){
 
-                    Api.get('/subjects').then((data)=>{
+                    Api.get('/api/subjects').then((data)=>{
 
                         for(let subject of data["data"])
                         {

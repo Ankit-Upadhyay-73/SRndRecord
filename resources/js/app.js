@@ -1,4 +1,4 @@
-
+import '@mdi/font/css/materialdesignicons.css'
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import routes from '../../routes';
@@ -9,8 +9,7 @@ Vue.use(Vuetify);
 Vue.use(VueRouter);
 //Vue.use(axios);
 
-
-var vapp = new Vue({
+new Vue({
     el: "#app",
     components: components,
     router: new VueRouter(routes),
@@ -18,6 +17,5 @@ var vapp = new Vue({
         icons: {
             iconfont: 'mdi', // default - only for display purposes
         },
-    }
-    ),
+    })
 });

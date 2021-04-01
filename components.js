@@ -1,6 +1,6 @@
 
 import Welcome from './resources/js/components/welcome';
-import Actions from './resources/js/components/actions';
+import home from './resources/js/components/home';
 import Login from './resources/js/components/Head/login';
 import Register from './resources/js/components/Head/register';
 import AddSubject from './resources/js/components/Subject/create';
@@ -11,7 +11,7 @@ import createmarksheet from './resources/js/components/Marksheet/createmarksheet
 import LayoutHeader from './resources/js/components/layout-header';
 export default {
     'layout-header': LayoutHeader,
-    'Actions': Actions,
+    'home': home,
     'Welcome': Welcome,
     'Login': Login,
     'Register': Register,

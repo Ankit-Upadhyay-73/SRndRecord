@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import User from './../../../Apis/User'
+import User from './../Apis/User'
     export default {
         data() {
             return {

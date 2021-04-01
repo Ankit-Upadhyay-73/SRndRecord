@@ -11,7 +11,7 @@
                         <v-row
                             justify="center">
                             <v-col
-                                cols="12" md="6">
+                                md="8" cols="12">
                                 <v-file-input
                                     ref="logo"
                                     dense
@@ -25,8 +25,11 @@
                                 >
                                 </v-file-input>
                             </v-col>
+                        </v-row>
 
-                            <v-col cols="12" md="6">
+                        <v-row justify="center">
+
+                            <v-col cols="12" md="8">
                                 <v-file-input
                                     dense
                                     ref="stamp"
@@ -39,15 +42,16 @@
                                     outlined
                                 ></v-file-input>
                             </v-col>
-
-                            <v-col cols="12" md="10">
+                        </v-row>
+                        <v-row justify="center">
+                            <v-col cols="12" md="8">
                                 <v-text-field
                                     :rules="[v=>!!v || 'Address Required']"
                                     dense
                                     v-model="college.address"
-                                    prepend-icon="mdi-location"
+                                    prepend-icon="mdi-location-radius"
                                     accept="image/png, image/jpeg, image/bmp"
-                                    placeholder="College Info"
+                                    placeholder="College Info"`
                                     label="place"
                                     color="black"
                                     outlined
@@ -56,6 +60,7 @@
                         </v-row>
 
                         <v-row justify="center">
+
                             <v-col cols="4"
                                 color="black"
                                 class="white--text"
@@ -87,15 +92,15 @@
 
 <script>
 
-import Api from './../../../../Apis/Api';
+import Api from './../../Apis/Api'
 
 export default ({
 
     data(){
 
         return{
-                college:{'address':"",'logo':null,'stamp':null}
-
+                college:{'address':"",'logo':null,'stamp':null},
+                response:[]
         }
 
     },
@@ -103,8 +108,6 @@ export default ({
     methods:{
 
         addCollegeLogo(){
-
-
 
         },
 
@@ -114,7 +117,7 @@ export default ({
 
         submitCollegeDetails(){
 
-            // console.log(this.college);
+            console.log(this.college);
 
             // Api.post('/college/update',this.college).then(()=>{
 
@@ -127,10 +130,10 @@ export default ({
 
             if(this.college.logo!='' && this.college.stamp!='' && this.college.address!=''){
 
-                collegeFormData.append("stamp",this.college.stamp.name);
-                collegeFormData.append("logo",this.college.logo.name);
+                collegeFormData.append("stamp",this.college.stamp);
+                collegeFormData.append("logo",this.college.logo);
                 collegeFormData.append("address",this.college.address);
-                Api.post('/college/update',collegeFormData,
+                Api.post('/api/college/update',collegeFormData,
                     {
                         headers: {
                             'Content-Type': 'multipart/form-data'

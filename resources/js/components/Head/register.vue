@@ -133,8 +133,8 @@
 
 <script>
 
-import User from './../../../../Apis/User';
-
+import User from './../../Apis/User'
+import CSRF from './../../Apis/CSRF'
 export default ({
 
     data(){
@@ -149,20 +149,25 @@ export default ({
         },
         onRegister()
         {
-            if((this.head.name || this.head.password || this.head.email || this.head.college || this.head.course || this.head.phone)!=''){
-                User.register(this.head).then((data)=>{
-                    if(data.status==201){
-                        // User.login({"email":this.head.email,"password":this.head.password})
-                        //     .then((data)=>{
-                        //     if(data.status==204){
-                        //         this.$emit('clicked',false);
-                        //         this.$router.push('/actions');
-                        //     }
-                        // });
-                        this.$router.push('/login');
-                    }
-                });
-            }
+            CSRF.getCookies().then(e=>{
+
+                if((this.head.name || this.head.password || this.head.email || this.head.college || this.head.course || this.head.phone)!=''){
+                                User.register(this.head).then((data)=>{
+                                    if(data.status==201){
+                                        // User.login({"email":this.head.email,"password":this.head.password})
+                                        //     .then((data)=>{
+                                        //     if(data.status==204){
+                                        //         this.$emit('clicked',false);
+                                        //         this.$router.push('/actions');
+                                        //     }
+                                        // });
+                                        this.$router.push('/head/login');
+                                    }
+                                });
+                            }
+
+            })
+
         }
     }
 })

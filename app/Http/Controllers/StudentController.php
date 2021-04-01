@@ -13,12 +13,22 @@ class StudentController extends Controller
 {
     //
 
-    public function index()
+    public function index(Request $request)
     {
-        $role = Role::where('name', 'student')->get();
-        $role_id = $role[0]["id"];
-        $user = User::where('role_id', $role_id)->get();
-        return $user;
+        $students = [];
+        $head = $request->user();
+        $college_id =  $head->colleges[0]->id;
+        $students_in_college =  Student::where('college_id', $college_id)->get();
+        foreach ($students_in_college as $student) {
+            $students[] = $student->user;
+        }
+
+        return $students;
+
+        // $role = Role::where('name', 'student')->get();
+        // $role_id = $role[0]["id"];
+        // $user = User::where('role_id', $role_id)->get();
+        // return $user;
     }
 
     public function validateRequest(Request $request)
@@ -82,10 +92,11 @@ class StudentController extends Controller
         $course_id = $request->user()->courses[0]->id;
         // return $studentname = User::find($id);
         $student  = Student::where(['id' => $id, 'course_id' => $course_id])->get();
-        $user_id  = $student[0]->user_id;
-        $studentname = "Not Found";
-        if ($student->count() > 0)
-            $studentname = User::find($user_id);
-        return response()->json($studentname);
+        $student_details = "Not Found";
+        if ($student->count() != 0) {
+            $user_id  = $student[0]->user_id;
+            $student_details = User::find($user_id);
+        }
+        return response()->json($student_details);
     }
 }

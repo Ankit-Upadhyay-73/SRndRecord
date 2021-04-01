@@ -6,6 +6,7 @@
         <v-main>
 
             <v-container>
+                <h2>Create Marksheet</h2>
                 <v-row justify="center">
                     <v-col cols="6" md="4">
                         <v-text-field rounded outlined dense type="text" v-model="student"  placeholder="Student ID" color="black">
@@ -18,11 +19,23 @@
 
                 <v-divider class="mt-5"></v-divider>
 
-                <span style="font-family:Comic Sans MS;font-style:Italic">Subject Details</span>
+                <span style="font-family:Comic Sans MS;font-style:Italic" v-if="subjectCount>0">Subject Details</span>
 
                 <!-- <span class="text-center">Subjects in {{course}}</span> -->
+
+                <v-row justify="center" align="center" v-if="errorMessage!=null" class="mt-3">
+                    <v-card>
+                        <v-card-text class="black--text" style="font-family:Nyala">
+
+                            <h2>{{this.errorMessage}}</h2>
+
+                        </v-card-text>
+                    </v-card>
+                </v-row>
+
+
                 <v-row justify="center">
-                    <v-card class="mt-5 p-2" v-if="studentExists" width="90%">
+                    <v-card class="mt-5 p-2" v-if="studentExists && subjectCount>0" width="90%">
                         <v-row>
                             <v-col cols="4">
                                 <span>Name</span>
@@ -63,7 +76,7 @@
 
 <script>
 
-import Api from './../../../../Apis/Api';
+import Api from './../../Apis/Api'
 import axios from 'axios'
 export default({
     name:'createmarksheet',
@@ -73,7 +86,9 @@ export default({
             subjects:[],
             student:"",
             studentExists:false,
-            studentDetails:{name:''}
+            studentDetails:{name:''},
+            subjectCount : 0,
+            errorMessage:null
         }
     },
     methods:{
@@ -82,13 +97,15 @@ export default({
 
             this.studentExists = false;
 
-            Api.get('/student/'+this.student).then((response)=>{
+            Api.get('/api/student/'+this.student).then((response)=>{
 
-                console.log(response);
                 if(response["data"]!="Not Found"){
                     this.studentExists = true;
+                    if(this.subjectCount ==0)
+                        this.errorMessage = "Subject not Found";
                 }
-
+                else
+                    this.errorMessage = "Student Doesn't Exists";
             });
         },
 
@@ -115,8 +132,17 @@ export default({
                 //     link.click()
                 // });
 
-                Api.post('/marksheet/create',{subjects:this.subjects,student:this.student,exam:"First Sem",year:"2019"}).then(data =>{
-                    console.log(data);
+                Api.post('/api/marksheet/create',{subjects:this.subjects,student:this.student,exam:"First Sem",year:"2019"}).then(response =>{
+                    if(response.data=="Not Found"){
+                        this.studentExists = false;
+                        this.errorMessage = "Student Doesn't Exists";
+                    }
+                    else
+                        {
+                            this.studentExists = true;
+                            this.errorMessage = null;
+                            this.studentDetails = response.data;
+                        }
                 });
 
             }
@@ -133,14 +159,15 @@ export default({
 
         // });
 
-        Api.get('/fetchSubjectsWithCourse').then((data)=>{
+        Api.get('/api/fetchSubjectsWithCourse').then((data)=>{
 
             this.subjects = data["data"]
+            this.subjectCount = this.subjects.length;
+
             for(let subject of this.subjects){
                 subject.obtained = 0;
             }
 
-            // console.log(this.subjects);
         });
 
     }

@@ -3,14 +3,13 @@
     <v-app>
         <v-main>
             <v-container>
-
                         <v-row class="d-flex" dense >
                             <v-dialog
                                     v-model="isAdded"
                                     width="400">
                                 <v-card>
                                     <v-card-title class="headline grey lighten-2">
-                                        Added
+                                        Student Added Successfully
                                     </v-card-title>
                                     <v-card-text>
                                         {{responseMessage}}
@@ -68,8 +67,8 @@
 
 <script>
 
-import User from './../../../../Apis/User';
-import Api from './../../../../Apis/Api';;
+import User from './../../Apis/User'
+import Api from './../../Apis/Api'
 
 export default({
 
@@ -90,9 +89,8 @@ export default({
     methods:{
         onAddStudent()
         {
-            Api.post('/student',this.student).then((data) =>{
-                console.log(data["data"]["message"]);
-                if(data["data"]["email"]==this.student.email)
+            Api.post('/api/student',this.student).then((response) =>{
+                if(response.data["email"]==this.student.email)
                 {
                     this.isAdded = true;
                     this.responseMessage = "Saved Successfully"
@@ -100,7 +98,7 @@ export default({
                 }
                 else
                     {
-                        this.responseMessage = data["data"]["message"];
+                        this.responseMessage = response.data["message"];
                     }
 
             });

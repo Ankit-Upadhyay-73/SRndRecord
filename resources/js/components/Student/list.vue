@@ -13,7 +13,7 @@
 
 
 <script>
-import Api from './../../../../Apis/Api';;
+import Api from './../../Apis/Api';
             export default {
                 data () {
                   return {
@@ -31,7 +31,7 @@ import Api from './../../../../Apis/Api';;
                 },
                 created(){
 
-                    Api.get('/students').then((data)=>{
+                    Api.get('/api/students').then((data)=>{
 
                         for(let student of data["data"])
                         {
