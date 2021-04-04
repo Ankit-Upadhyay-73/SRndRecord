@@ -9,6 +9,10 @@
                 Thanks For Using Student Result And Record <b>):</b> Be Connected For Further Marksheet Creations.
             </span>
 
+            <v-btn dark @click="$router.push('/welcome')">
+                Home
+            </v-btn>
+
         </v-container>
 
     </v-app>
@@ -29,7 +33,6 @@ export default ({
         var _nuxt = this;
         Api.post('/api/logout').then((data)=>{
             _nuxt.$emit('loggedin',false);
-            this.$router.push('/head/login');
         });
     }
 })

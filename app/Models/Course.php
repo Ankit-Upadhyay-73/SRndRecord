@@ -11,6 +11,10 @@ class Course extends Model
 
     protected $hidden = ["pivot"];
 
+    protected $fillable = [
+        'name','duration'
+    ];
+
     public function subjects()
     {
         return $this->belongsToMany(Subject::class, 'course_subject');

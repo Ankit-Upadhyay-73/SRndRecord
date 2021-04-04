@@ -9,6 +9,10 @@ class College extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name','logo','address','stamp'
+    ];
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'college_user');

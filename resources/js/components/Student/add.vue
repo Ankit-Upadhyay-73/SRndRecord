@@ -2,62 +2,87 @@
 
     <v-app>
         <v-main>
+
+            <v-row dense>
+                <h3>
+                    Add New Student in {{course.name}}
+                </h3>
+                
+                <v-spacer></v-spacer>
+                
+                <v-btn dark>
+                    List Students
+                </v-btn>
+            </v-row>
+            
+            <span>You can create marksheet of these students by inputting their marks</span>    
+        
             <v-container>
-                        <v-row class="d-flex" dense >
-                            <v-dialog
-                                    v-model="isAdded"
-                                    width="400">
-                                <v-card>
-                                    <v-card-title class="headline grey lighten-2">
-                                        Student Added Successfully
-                                    </v-card-title>
-                                    <v-card-text>
-                                        {{responseMessage}}
-                                    </v-card-text>
-                                </v-card>
-                            </v-dialog>
-                        </v-row>
+                <v-row class="d-flex" dense >
+
+                    <v-dialog
+                        v-model="response_dialog"
+                        width="400">
+                        <v-card>
+                            <v-card-text>
+                                {{student_response.text}}
+                            </v-card-text>
+                        </v-card>
+                    </v-dialog>
+
+                </v-row>
 
                 <v-row>
+                    <v-col cols="12" class="d-flex justify-content-center">
 
-                    <v-col cols="12"  class="d-flex justify-content-center">
+                        <v-card 
+                            shaped 
+                            style="width:100%">
 
-                            <v-card shaped style="width:100%">
+                            <v-card-title style="background-color:black">
+                                <h4 
+                                    style="font-family:Comic Sans MS;color:white">
+                                    Add Student
+                                </h4>
+                            </v-card-title>
 
-                                <v-card-title style="background-color:black">
-                                    <h4 style="font-family:Comic Sans MS;color:white">Add Student</h4>
-                                </v-card-title>
+                            <v-card-text>
+                                <form class="mt-2">
+                                    <v-row class="d-flex" dense style="display:flex;justify-content:center">
+                                        <v-col cols="8">
+                                            <v-text-field 
+                                                dense 
+                                                outlined 
+                                                label="Name" 
+                                                color="black" 
+                                                v-model="student.name">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
 
-                                <v-card-text>
+                                    <v-row class="d-flex" dense style="display:flex;justify-content:center">
+                                        <v-col cols="8">
+                                            <v-text-field 
+                                                dense 
+                                                outlined 
+                                                label="Email" 
+                                                color="black" 
+                                                v-model="student.email">
+                                            </v-text-field>
+                                        </v-col>
+                                    </v-row>
 
-                                    <form class="mt-2">
+                                    <v-row class="d-flex" dense justify="center">
+                                        <v-btn
+                                            text class="white--text text-capitalize" outlined style="background-color:black" @click="onAddStudent()">
+                                            <span style="font-family:Roboto">Add</span>
+                                        </v-btn>
+                                    </v-row>
+                                </form>
+                            </v-card-text>
+                        </v-card>
 
-                                        <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                            <v-col cols="8">
-                                                <v-text-field dense outlined label="Name" color="black" v-model="student.name">
-                                                </v-text-field>
-                                            </v-col>
-                                        </v-row>
-
-                                        <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                            <v-col cols="8">
-                                                <v-text-field dense outlined label="Email" color="black" v-model="student.email">
-                                                </v-text-field>
-                                            </v-col>
-                                        </v-row>
-
-                                        <v-row class="d-flex" dense justify="center">
-                                                <v-btn
-                                                     text class="white--text text-capitalize" outlined style="background-color:black" @click="onAddStudent()">
-                                                    <span style="font-family:Roboto">Add</span>
-                                                </v-btn>
-                                        </v-row>
-
-                                    </form>
-                                </v-card-text>
-                            </v-card>
                     </v-col>
-
                 </v-row>
             </v-container>
         </v-main>
@@ -74,9 +99,11 @@ export default({
 
     data(){
         return{
+            course:[],
             student:{name:"",email:"",password:"",phone:""},
-            isAdded:false,
-            responseMessage:'',
+            response_dialog:false,
+            student_response:[],
+            
         }
     },
     mounted(){

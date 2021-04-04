@@ -2,126 +2,232 @@
 <template>
 
     <v-app>
-        <v-main>
-            <v-container>
-                <v-row>
-                    <v-col cols="12"
-                            class="d-flex justify-content-center"
+        <!-- register popup -->
+        <v-dialog 
+            width="50%"
+            v-model="event_response"
+            >
+
+            <v-card height="100">
+                <v-card-text 
+                    class="black--text"
+                    >
+
+                    <h3 style="justify-self:center">
+                        {{register_response.text}}
+                    </h3>
+
+                </v-card-text>
+
+                <v-card-actions>
+
+                        <!-- buttons OK and Cancel  -->
+                        <v-btn
+                            color="black"
+                            @click="register_response.success ? $router.push({path:'/head/login'}) : '' "
                             >
-                        <v-card shaped style="width:100%">
+                            OK
+                        </v-btn>
+
+                        <v-btn
+                            color="error"
+                            @click="event_response = !event_response"
+                        >
+                            Cancel
+
+                        </v-btn>
+
+                </v-card-actions>
+
+            </v-card>
+
+        </v-dialog> 
+        <!-- </> registration popup ends here -->
+
+
+        <v-main>
+
+            <!-- registration fields starts here -->
+            <v-container>
+                <v-row class="justify-center">
+                    <h3 class="black--text mt-2">
+
+                        Register with Your College, course and Personal details to use services
+
+                    </h3>
+                </v-row>
+
+                <v-row class="justify-center">
+                    <v-col
+                        cols="12"
+                        md="8"
+                        class="d-flex justify-content-center">
+
+                        <v-card 
+                            shaped 
+                            style="width:100%">
+
                             <v-card-title
                                 style="background-color:black">
-                                <h4 style="font-family:Comic Sans MS;color:white">
+                                <h4 class="white--text">
                                     Register
                                 </h4>
                             </v-card-title>
 
                             <v-card-text>
+                                <!-- input form for register -->
+
                                 <form class="mt-2">
-                                    <v-row class="d-flex" dense
-                                            style="display:flex;justify-content:center">
-                                        <v-col cols="8">
-                                            <v-text-field  dense outlined
+
+                                    <v-row 
+                                        class="justify-center"
+                                        dense >
+
+                                        <v-col cols="12" md="8">
+                                            <v-text-field 
+                                                dense
+                                                outlined label="College"
+                                                color="black"
+                                                v-model="head.college"
+                                                prepend-inner-icon="mdi-school"
+                                                :rules="[() => !!head.college || 'This field is required']">
+                                            </v-text-field>
+                                            <span class="annotation">College name is uniquely manage colleges </span>
+                                        </v-col>
+
+                                    </v-row>
+
+                                    <v-row 
+                                        class="justify-center"
+                                        dense
+                                        >
+                                        <v-col cols="12" md="8">
+                                            <v-text-field 
+                                                dense
+                                                outlined label="Course"
+                                                color="black"
+                                                v-model="head.course"
+                                                prepend-inner-icon="mdi-alpha-c-circle-outline"
+                                                :rules="[() => !!head.course || 'This field is required']">
+                                            </v-text-field>
+                                            <span class="annotation">Mention your course details for better student and subject management</span>
+                                        </v-col>
+                                    </v-row>
+
+                                    <v-row 
+                                        class="justify-center"
+                                        dense
+                                        >
+
+                                        <v-col cols="12" md="8">
+
+                                            <v-text-field
+                                                dense
+                                                outlined
                                                 label="Name"
                                                 color="black"
+                                                prepend-inner-icon="mdi-pen"
                                                 v-model="head.name"
                                                 :rules="[() => !!head.name || 'This field is required']"
                                             >
                                             </v-text-field>
+                                            <span class="annotation">Your Name</span>                                            
                                         </v-col>
+                                        
                                     </v-row>
 
-                                    <v-row class="d-flex" dense
-                                            style="display:flex;justify-content:center">
-                                            <v-col cols="8">
-                                                <v-text-field
-                                                    dense outlined label="Phone"
-                                                    color="black"
-                                                    v-model="head.phone"
-                                                    :rules="[() => !!head.phone || 'This field is required']"
-                                                >
-                                                </v-text-field>
-                                            </v-col>
+                                    <v-row 
+                                        class="justify-center" 
+                                        dense
+                                        >
+                                        <v-col cols="12" md="8">
+                                            <v-text-field
+                                                dense outlined label="Phone"
+                                                color="black"
+                                                v-model="head.phone"
+                                                prepend-inner-icon="mdi-dialpad"
+                                                :rules="[() => !!head.phone || 'This field is required']">
+
+                                            </v-text-field>
+                                            <span class="annotation">Mobile Number to uniquely identify you</span>                                         
+                                        </v-col>
+
                                     </v-row>
 
-                                    <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                        <v-col cols="8">
-                                            <v-text-field dense outlined
+                                    <v-row  
+                                        dense 
+                                        class="justify-center"
+                                        >
+
+                                        <v-col cols="12" md="8">
+                                            <v-text-field 
+                                                dense 
+                                                outlined
                                                 label="Email"
                                                 color="black"
+                                                prepend-inner-icon="mdi-email"
                                                 v-model="head.email"
                                                 :rules="[() => !!head.email || 'This field is required']"
                                             >
                                             </v-text-field>
+                                            <span  class="annotation">Email to update you if any, </span>
                                         </v-col>
+
                                     </v-row>
 
-                                    <v-row class="d-flex"
-                                            dense style="display:flex;justify-content:center">
-                                        <v-col cols="8">
-                                            <v-text-field dense
-                                                outlined label="College"
-                                                color="black"
-                                                v-model="head.college"
-                                                :rules="[() => !!head.college || 'This field is required']">
-                                            </v-text-field>
-                                        </v-col>
-                                    </v-row>
+                                    <v-row 
+                                        class="justify-center"
+                                        dense 
+                                        >
+                                        <v-col cols="12" md="8">
 
-                                    <v-row class="d-flex"
-                                            dense
-                                            style="display:flex;justify-content:center">
-                                            <v-col cols="8">
-                                                <v-text-field dense
-                                                    outlined label="Course"
-                                                    color="black"
-                                                    v-model="head.course"
-                                                    :rules="[() => !!head.course || 'This field is required']">
-                                                </v-text-field>
-                                            </v-col>
-                                    </v-row>
-
-                                    <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                        <v-col cols="8">
-                                            <v-text-field  dense
+                                            <v-text-field  
+                                                dense
                                                 outlined
                                                 label="Password"
                                                 color="black"
+                                                prepend-inner-icon="mdi-form-textbox-password"
                                                 v-model="head.password"
                                                 type="password"
                                                 :rules="[() => !!head.password || 'This field is required']">
                                             </v-text-field>
+                                            <span class="annotation" >Password to secure your details</span>
                                         </v-col>
                                     </v-row>
 
-                                    <v-row class="d-flex"
-                                            dense
-                                            justify="center">
-                                        <v-btn
-                                            text
-                                            class="white--text text-capitalize mr-2"
-                                            outlined
-                                            style="background-color:black"
-                                            @click="backLogin()"
+                                    <v-row
+                                        dense
+                                        class="justify-center"
                                         >
-                                            <span style="font-family:Roboto">
-                                                Login
-                                            </span>
-                                        </v-btn>
+
                                         <v-btn
                                             text
                                             class="white--text text-capitalize"
                                             outlined
                                             style="background-color:black"
-                                            @click="onRegister()">
-                                            <span style="font-family:Roboto">
+                                            @click="attemptRegister()">
+
                                                 Register
-                                            </span>
+
                                         </v-btn>
                                     </v-row>
+
+                                    <v-divider class="mt-2"></v-divider>
+
+                                    <!-- login btn if already have an account -->
+                                    <v-row class="justify-start mt-3">
+
+                                        <h3 style="font-family:Comic Sans MS" class="font-italic">Have an account ?</h3>
+
+                                        <router-link class="black--text font-weight-bold" :to="{path:'/head/login'}" style="font-family:Comic Sans MS;font-size:14px">Login</router-link>
+
+                                    </v-row>
+
                                 </form>
                             </v-card-text>
+
                         </v-card>
+
                     </v-col>
 
                 </v-row>
@@ -135,40 +241,73 @@
 
 import User from './../../Apis/User'
 import CSRF from './../../Apis/CSRF'
-export default ({
 
-    data(){
-        return{
-            head:{name:'',password:'',email:'',college:'',course:'',phone:''}
-        }
-    },
-    methods:{
-        backLogin()
-        {
-            this.$router.push({path:'/head/login'});
+export default (
+    {
+        data(){
+            return{
+                head:{name:'',password:'',email:'',college:'',course:'',phone:''},
+                register_response:[],
+                event_response:false
+            }
+            
         },
-        onRegister()
-        {
-            CSRF.getCookies().then(e=>{
+        methods:{
+            attemptRegister(){
 
-                if((this.head.name || this.head.password || this.head.email || this.head.college || this.head.course || this.head.phone)!=''){
-                                User.register(this.head).then((data)=>{
-                                    if(data.status==201){
-                                        // User.login({"email":this.head.email,"password":this.head.password})
-                                        //     .then((data)=>{
-                                        //     if(data.status==204){
-                                        //         this.$emit('clicked',false);
-                                        //         this.$router.push('/actions');
-                                        //     }
-                                        // });
-                                        this.$router.push('/head/login');
-                                    }
-                                });
+                CSRF.getCookies()
+                    .then( response=>{
+
+                        if((this.head.name || 
+                            this.head.password || 
+                            this.head.email || 
+                            this.head.college || 
+                            this.head.course || 
+                            this.head.phone)!='')
+                            {
+                                User.register(this.head)
+                                    .catch(error => {
+
+                                        // input data validation on server
+
+                                        if(error.data.status==406)
+                                        {
+                                            this.event_response.success = false;
+                                            this.event_response.text = "Unacceptable Input"
+                                            this.event_response = true;
+                                        }
+                                
+                                        // if already registered throw 422 the (data can't be processed)
+                                        if(error.data.status==422)
+                                        {
+                                            this.event_response.success = false;
+                                            this.event_response.text = "Seems that you are already registered."
+                                            this.event_response = true;
+                                        }
+                                        
+                                    })
+                                        .then(
+                                            (data)=>{
+                                                //registered successfully
+                                                if(data.status==201)
+                                                {
+                                                    this.event_response = true;
+                                                    this.register_response.text = "Registered Successfully";
+                                                    this.register_response.status = true;
+                                                }
+                                        });
                             }
-
-            })
-
-        }
+                    })
+            }
     }
 })
 </script>
+
+<style>
+
+    .annotation{
+        font-style: italic;
+        color:lightgreen;
+    }
+
+</style>

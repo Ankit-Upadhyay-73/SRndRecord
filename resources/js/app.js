@@ -7,15 +7,18 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 Vue.use(Vuetify);
 Vue.use(VueRouter);
+
 //Vue.use(axios);
 
 new Vue({
     el: "#app",
     components: components,
     router: new VueRouter(routes),
-    vuetify: new Vuetify({
-        icons: {
-            iconfont: 'mdi', // default - only for display purposes
-        },
+    vuetify: new Vuetify(
+        {
+            icons: 
+                {
+                    iconfont: 'mdi', // default - only for display purposes
+                },
     })
 });

@@ -49,9 +49,9 @@
                                     :rules="[v=>!!v || 'Address Required']"
                                     dense
                                     v-model="college.address"
-                                    prepend-icon="mdi-location-radius"
+                                    prepend-inner-icon="mdi-map-marker"         
                                     accept="image/png, image/jpeg, image/bmp"
-                                    placeholder="College Info"`
+                                    placeholder="College Info"
                                     label="place"
                                     color="black"
                                     outlined

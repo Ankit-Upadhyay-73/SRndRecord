@@ -5,37 +5,108 @@
 
         <v-main>
 
+            <!-- something like alert to aware them about marksheet logo and stamp -->
+            <div>
+                <h3 color="primary">
+
+                    Make Sure You have added 
+                        <router-link :to="{path:'/profile'}">
+                            College Logo and Stamp
+                        </router-link>
+                    for college verified MarkSheets
+
+                </h3>
+            </div>
+
             <v-container>
-                <h2>Create Marksheet</h2>
+                <h2>
+                    Create Marksheet
+                </h2>
+
+                <!-- fields to input student detail for marksheet-->
+
                 <v-row justify="center">
-                    <v-col cols="6" md="4">
-                        <v-text-field rounded outlined dense type="text" v-model="student"  placeholder="Student ID" color="black">
+
+                    <v-col cols="12" md="4">
+
+                        <v-autocomplete
+                            :items="students"
+                            :filter="customFilter"
+                            color="white"
+                            item-text="name"
+                            label="State"
+                            >
+
+                        </v-autocomplete>
+
+                        <v-text-field
+                            :items="students"
+                            item-text="name"
+                            item-value="id"
+                            rounded
+                            outlined
+                            dense
+                            type="text"
+                            v-model="student_id"
+                            prepend-icon="mdi-human-child"
+                            placeholder="Student Name" color="black">
                         </v-text-field>
+
                     </v-col>
-                    <v-col cols="6" md="3">
-                        <v-btn outlined text color="white--text dark" @click="onFetchStudent">find</v-btn>
+
+                    <v-col cols="12" md="4">
+
+                        <v-select
+                            v-model="academic_year"
+                            :items="years"
+                            label="Academic Year"
+                            prepend-icon="mdi-calendar-month"
+                            dense
+                            solo
+                        >
+
+                        </v-select>
                     </v-col>
+
+                    <v-col cols="12" md="4">
+
+                        <v-select
+                            v-model="selected_exam"
+                            :items="exams"
+                            label="Exam Category"
+                            prepend-icon="mdi-newspaper-variant"
+                            dense
+                            solo
+                        >
+
+                        </v-select>
+
+                    </v-col>
+
+
                 </v-row>
 
                 <v-divider class="mt-5"></v-divider>
 
-                <span style="font-family:Comic Sans MS;font-style:Italic" v-if="subjectCount>0">Subject Details</span>
+                <!-- Display Subject in the course -->
+                
+                <span style="font-family:Comic Sans MS;font-style:Italic" v-if="subject_count > 0">Subject Details</span>
 
                 <!-- <span class="text-center">Subjects in {{course}}</span> -->
 
-                <v-row justify="center" align="center" v-if="errorMessage!=null" class="mt-3">
+                <v-row justify="center" align="center" v-if="error_message!=null" class="mt-3">
                     <v-card>
-                        <v-card-text class="black--text" style="font-family:Nyala">
+                        <v-card-text class="black--text">
 
-                            <h2>{{this.errorMessage}}</h2>
+                            <h2>{{this.error_message}}</h2>
 
                         </v-card-text>
                     </v-card>
                 </v-row>
 
-
+                <!-- fields to input marks obtained in each subject -->
                 <v-row justify="center">
-                    <v-card class="mt-5 p-2" v-if="studentExists && subjectCount>0" width="90%">
+                    <v-card class="mt-5 p-2" v-if="student_exists && subject_count>0" width="90%">
                         <v-row>
                             <v-col cols="4">
                                 <span>Name</span>
@@ -61,7 +132,7 @@
                             </v-col>
                         </v-row>
                         <v-row justify="center">
-                            <v-btn @click="createResult">Create Result</v-btn>
+                            <v-btn @click="prepareMarksheet">Create Result</v-btn>
                         </v-row>
                     </v-card>
                 </v-row>
@@ -78,100 +149,144 @@
 
 import Api from './../../Apis/Api'
 import axios from 'axios'
-export default({
-    name:'createmarksheet',
-    data(){
-        return{
-            invalidInput:false,
-            subjects:[],
-            student:"",
-            studentExists:false,
-            studentDetails:{name:''},
-            subjectCount : 0,
-            errorMessage:null
-        }
-    },
-    methods:{
 
-        onFetchStudent(){
+export default
+    {
+        name:'createmarksheet',
 
-            this.studentExists = false;
+        data(){
+            return{
+                invalid_input:false,
+                result_response:[],
+                response_dialog:false,
+                subjects:[],
+                students:[],
+                student_id:'',
+                subject_count : 0,
+                academic_year:null,
+                selected_exam:null,
+                exams : [ "SEM" , "Unit"],
+                years:  [ "2019-2020" , "2020-2021"]
 
-            Api.get('/api/student/'+this.student).then((response)=>{
-
-                if(response["data"]!="Not Found"){
-                    this.studentExists = true;
-                    if(this.subjectCount ==0)
-                        this.errorMessage = "Subject not Found";
-                }
-                else
-                    this.errorMessage = "Student Doesn't Exists";
-            });
+            }
         },
 
-        createResult(){
+        methods:{
 
-            for(let subject of this.subjects){
-                if(subject.obtained > subject.total){
-                    this.invalidInput  = true;
-                }
-            }
-            if(!this.invalidInput){
+            findStudent(){
+                this.student_exists = false;
+                //find student
+                Api.get('/api/student/'+this.student_id).
+                            catch(error=>{
+                                if(error.data.status==401)
+                                    this.error_message = "UnAuthorized request";
 
-                // axios({
-                //     url:'http://127.0.0.1:8000/api/marksheet/create',
-                //     data: this.subjects,
-                //     method:'POST',
-                //     responseType: 'blob'
-                //     }).then((response)=>{
-                //     const url = window.URL.createObjectURL(new Blob([response.data]));
-                //     const link = document.createElement('a')
-                //     link.href = url
-                //     link.setAttribute('download','result.pdf')
-                //     document.body.appendChild(link)
-                //     link.click()
-                // });
+                                if(error.data.status==422)
+                                    this.error_message = "Invalid input";
+                            }).
+                            then((response)=>{
+                                    if(response.data.status==200)
+                                        this.students = response.data["students"];
+                            });
+            },
 
-                Api.post('/api/marksheet/create',{subjects:this.subjects,student:this.student,exam:"First Sem",year:"2019"}).then(response =>{
-                    if(response.data=="Not Found"){
-                        this.studentExists = false;
-                        this.errorMessage = "Student Doesn't Exists";
+
+            prepareMarksheet(){
+
+                for(let subject of this.subjects)
+                {
+                    if(subject.obtained > subject.total){
+                        this.invalid_marks  = true;                        
                     }
-                    else
-                        {
-                            this.studentExists = true;
-                            this.errorMessage = null;
-                            this.studentDetails = response.data;
+                }
+
+                if(this.invalid_marks){
+
+                    this.result_response.text = "Entered marks is invalid";
+                    this.response_dialog = true;
+
+                }
+
+                else{
+                        if(!this.invalid_marks){
+
+                            // axios({
+                            //     url:'http://127.0.0.1:8000/api/marksheet/create',
+                            //     data: this.subjects,
+                            //     method:'POST',
+                            //     responseType: 'blob'
+                            //     }).then((response)=>{
+                            //     const url = window.URL.createObjectURL(new Blob([response.data]));
+                            //     const link = document.createElement('a')
+                            //     link.href = url
+                            //     link.setAttribute('download','result.pdf')
+                            //     document.body.appendChild(link)
+                            //     link.click()
+                            // });
+
+
+                            // submit marks entered to create marksheet
+
+                            Api.post('/api/marksheet/create',
+                                        {
+                                            subjects:this.subjects,student:this.student_id,exam:this.selected_exam,year:this.academic_year
+                                        }
+                                    ).catch(error=>{
+
+                                        if(error.data.status==401)
+                                        {
+                                            this.result_response.success = false;
+                                            this.result_response.text = "Unauthorized request";
+                                            this.response_dialog = true;
+                                        }
+
+                                        if(error.data.status==500)
+                                        {
+                                            this.result_response.success = false;
+                                            this.result_response.text = "Server issue";
+                                            this.response_dialog = true;
+                                        }
+
+                                    }).then(response =>{
+
+                                        if(response.data.status==200)
+                                        {
+                                            this.result_response.success = true;
+                                            this.result_response.text = "Marksheet Created Successfully";
+                                            this.response_dialog = true;
+                                        }
+                                            
+                                    });
                         }
-                });
+                    }
+                }
+        },
 
-            }
+        mounted(){
 
+            Api.get('/api/fetchSubjectsWithCourse').
+                catch(error =>
+                        {
+                            if(error.data.status==401){
+                                this.error_message = "Unauthorized request";
+                            }
+
+                        }) .then(response=>{
+                                    
+                                    this.subjects = response.data;
+                                    this.subject_count = this.subjects.length;
+
+                                    if(this.subject_count==0)
+                                    {
+                                        this.response_dialog = true;
+                                        this.result_response.text="Subjects not found";
+                                    }
+
+                                    for(let subject of this.subjects){
+                                        subject.obtained = 0;
+                                    }
+
+                            });
         }
-
-    },
-
-    mounted(){
-
-        // User.fetchUser().then((data)=>{
-
-        //     console.log(data);
-
-        // });
-
-        Api.get('/api/fetchSubjectsWithCourse').then((data)=>{
-
-            this.subjects = data["data"]
-            this.subjectCount = this.subjects.length;
-
-            for(let subject of this.subjects){
-                subject.obtained = 0;
-            }
-
-        });
-
     }
-
-
-})
 </script>

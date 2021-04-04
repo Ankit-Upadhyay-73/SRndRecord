@@ -1,22 +1,26 @@
 <template>
         <v-app>
             <v-main>
+                
+                <!-- layout appbar including title, drawer & Login,Logout Options -->
                 <v-app-bar
                     style="background-color: black">
 
                     <v-app-bar-nav-icon
-                        @click.stop="drawerState = !drawerState"
+                        @click.stop="drawer_status = !drawer_status"
                         class="white" v-if="!showLoginRegisterMenu">
                     </v-app-bar-nav-icon>
 
                     <v-toolbar-title
-                        class="justify-center"
-                        style="font-family: Comic Sans MS;color:white">
+                        class="justify-center white--text"
+                        style="font-family:Comic Sans MS"
+                        >
                         MarkSheet
                     </v-toolbar-title>
 
                     <v-spacer></v-spacer>
 
+                    <!-- show profile and logging out menu -->
                     <v-menu offset-y
                         v-if="!showLoginRegisterMenu">
 
@@ -26,8 +30,12 @@
                                 v-on="on"
                                 class="text-capitalize"
                                 >
-                                <span style="font-family:Comic Sans MS">{{uname}}</span>
-                                    <v-icon color="white">mdi-arrow-down-bold-circle</v-icon>
+                                <span style="font-family:Comic Sans MS" class="text-bold">
+                                    {{uname}}
+                                </span>
+                                <v-icon color="white">
+                                    mdi-arrow-down-bold-circle
+                                </v-icon>
                             </v-btn>
                         </template>
 
@@ -44,7 +52,9 @@
                             </v-list-item>
                         </v-list>
                     </v-menu>
+                    <!-- </> end loggedin menu -->
 
+                    <!-- show login and register button if not logged in -->
                     <v-btn
                         v-if="showLoginRegisterMenu"
                         style="background-color:black;font-family:Comic Sans MS"
@@ -52,7 +62,7 @@
                         v-on:click="$router.push({path:'/head/login'});">
                         Login
                     </v-btn>
-
+                
                     <v-btn v-if="showLoginRegisterMenu"
                             style="background-color:black;font-family:Comic Sans MS"
                             class="white--text text-capitalize text-bold"
@@ -60,17 +70,19 @@
                         >
                         Register
                     </v-btn>
-                </v-app-bar>
+                    <!-- </> end login and register btn  ection-->
 
+                </v-app-bar>                
+
+                <!-- <> drawer starts here -->
                 <v-navigation-drawer absolute
                     temporary
                     style="background-color:#ebecf0"
-                    v-model="drawerState">
+                    v-model="drawer_status">
 
                     <v-list
                         >
                         <div
-
                             style="border:1px solid black;padding:60px;margin:10px">
                             <span
                                 style="font-family:Comic Sans MS;color:#000000;">
@@ -79,7 +91,6 @@
                         </div>
 
                         <span
-
                             style="font-family:Comic Sans MS;text-decoration:underline;font-weight:bold;color:#808080">
                                 Actions
                         </span>
@@ -104,10 +115,18 @@
                            <v-list-item
                                 v-for="subActions in item.to"
                                 :key="subActions.to">
-                                <v-icon>{{subActions.icon}}</v-icon>
+                                <v-icon>
+                                    {{subActions.icon}}
+                                </v-icon>
+
                                 <v-spacer></v-spacer>
+
                                 <v-list-item-content>
-                                    <router-link style="text-decoration:none;color:#808080;font-family:Comic Sans MS" :to="subActions.path" v-text="subActions.title"></router-link>
+                                    <router-link 
+                                        style="text-decoration:none;color:#808080;font-family:Comic Sans MS" 
+                                        :to="subActions.path" 
+                                        v-text="subActions.title">
+                                    </router-link>
                                 </v-list-item-content>
 
                             </v-list-item>
@@ -116,65 +135,89 @@
 
                 </v-navigation-drawer>
 
+                    
+                <!-- <> components dyamically updates here -->
+                <!-- event to check user is logged in or not -->
                 <router-view @loggedin="onLoggedIn"></router-view>
-
+                <!-- </> all components end section here -->
             </v-main>
         </v-app>
 </template>
 
 <script>
+
 import User from './../Apis/User'
-export default({
+
+export default ({
+
     name:'layout-header',
+
     data(){
         return {
                 showLoginRegisterMenu:true,
-                drawerState:false,
+                drawer_status:false,
                 uname : "",
-                items: [
-                        { title: 'LogOut', path:'/logout'},
-                        { title: 'Profile',path:'/profile'}
-                    ],
-                actions:[
-                            { title:'Student',Subtitle:'Student Operations',to:[{path:'/student/create',title:'Add',icon:'mdi-creation'},{path:'/students',title:'List',icon:'mdi-format-list-bulleted'}]},
-                            { title:'Subject',active:true,Subtitle:'Subject Operations',to:[{path:'/subject/create',title:'Add',icon:'mdi-creation'},{path:'/subjects',title:'List',icon:'mdi-format-list-bulleted'}]},
-                            { title:'Marksheet',Subtitle:'Create MarkSheet',to:[{path:'/marksheet/create',title:'Create',icon:'mdi-creation'}]},
-                        ]
+                items: 
+                [
+                    { title: 'LogOut', path:'/logout'},
+                    { title: 'Profile',path:'/profile'}
+                ],
+
+                actions:
+                [
+                    { 
+                        title:'Student',Subtitle:'Student Operations',
+                        to:[
+                                {path:'/student/create',title:'Add',icon:'mdi-creation'},
+                                {path:'/students',title:'List',icon:'mdi-format-list-bulleted'}
+                            ]
+                    },
+
+                    { 
+                        title:'Subject',active:true,Subtitle:'Subject Operations',
+                        to:[
+                                {path:'/subject/create',title:'Add',icon:'mdi-creation'},
+                                {path:'/subjects',title:'List',icon:'mdi-format-list-bulleted'}
+                            ]
+                    },
+
+                    { 
+                        title:'Marksheet',Subtitle:'Create MarkSheet',
+                        to:[
+                                {path:'/marksheet/create',title:'Create',icon:'mdi-creation'}
+                            ]
+                    },
+
+                ]
             }
         },
+
     created(){
 
-            //first fetch session and then send requets to server for fetching users details
-            User.fetchUser().
-            then(response => {
-                if(response.data!=undefined)
-                {
-                    this.$router.push({path:'/home'});
-                    this.showLoginRegisterMenu = false;
-                    this.uname =  response.data["name"];
-                }
-            }).
-            catch(error=>{
-                if(error.response.status==401){
+            //first set session and then send requets to server for fetching users details
 
-                }
-            });
-        },
+            User.fetchUser().
+            
+                then(response => {
+
+                        if(response.data!=undefined)
+                        {
+                            this.$router.push({path:'/home'});
+                            this.showLoginRegisterMenu = false;
+                            this.uname =  response.data["name"];
+                        }
+
+                    }).catch(error=>{
+                            if(error.response.status==401){
+                                
+                            }
+                        });
+            },
 
     methods:{
 
-            onLoginClicked($event)
-            {
-                $router.push({path:'/head/login'});
-            },
-
-            onRegisterClicked()
-            {
-               $router.push({path:'/head/register'});
-            },
-
-            onLoggedIn(data){
-                this.showLoginRegisterMenu = !data;
+            onLoggedIn(value){
+                this.showLoginRegisterMenu = !value;
                 User.fetchUser().then((response)=>{
                     this.uname =  response.data["name"];
                 });

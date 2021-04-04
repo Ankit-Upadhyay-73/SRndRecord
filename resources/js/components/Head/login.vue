@@ -1,76 +1,142 @@
 
 <template>
-
     <v-app>
         <v-main>
+            <v-dialog 
+                width="50%"
+                v-model="event_response"
+                >
+                <v-card>
+
+                    <v-card-text 
+                        class="black--text" 
+                        style="font-family:Comic Sans MS"
+                        >
+
+                        <h2 style="justify-self:center">
+                            {{login_response.text}}
+                        </h2>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <v-row style="justify-content:center">
+                            <v-btn color="black" class="white--text" 
+                                    @click="login_response.success ? $router.push({path:'/home'}) : $router.push({path:'/register'}) "
+                                >
+                                OK
+                            </v-btn>
+                        </v-row>
+                    </v-card-actions>
+                </v-card>
+
+            </v-dialog> 
+
             <v-container>
 
-                <v-row>
+                <v-row class="justify-center mt-3">
 
-                    <v-dialog width="50%"
-                        v-model="login_result">
+                    <h2>
+                        Login with your Registered details to continue.
+                    </h2>
 
-                        <v-card height="100">
+                </v-row>
 
-                            <v-card-text class="black--text" style="font-family:Comic Sans MS">
-                                <h2 style="justify-self:center">{{response.login_response}}</h2>
+                <v-row class="justify-center">
+
+                    <!-- login fields -->
+                    <v-col 
+                        cols="12" 
+                        md="8"
+                        >
+
+                        <v-card shaped >
+
+                            <v-card-title style="background-color:black">
+                                <h4 class="white--text">Login</h4>
+                            </v-card-title>
+
+                            <v-card-text>
+                                <!-- form for input fiels -->
+                                <form>
+                                    <v-row 
+                                        class="mt-2" 
+                                        dense 
+                                        style="display:flex;justify-content:center"
+                                        >
+                                        <v-col cols="8">
+                                            <v-text-field
+                                                dense
+                                                outlined 
+                                                placeholder="eg John@gmail.com" 
+                                                label="Email" 
+                                                color="black"
+                                                prepend-inner-icon="mdi-email"
+                                                v-model="credentials.email"    
+                                                :rules="[() => !!credentials.email || 'This field is required']" 
+                                                >
+
+                                            </v-text-field>
+
+                                            <span class="text-danger" v-if="errors.email">
+                                                {{errors.email[0]}}
+                                            </span>
+
+                                        </v-col>
+                                    </v-row>
+
+                                    <v-row 
+                                        class="d-flex" 
+                                        dense 
+                                        style="display:flex;justify-content:center"
+                                        >
+
+                                        <v-col cols="8">
+                                            <v-text-field 
+                                                dense 
+                                                outlined 
+                                                type="password" 
+                                                label="Password" 
+                                                color="black" 
+                                                prepend-inner-icon="mdi-account-key"
+                                                v-model="credentials.password"  
+                                                :rules="[() => !!credentials.password || 'This field is required']" 
+                                            >
+                                            </v-text-field>
+                                            <span class="text-danger" v-if="errors.password">
+                                                {{errors.password[0]}}
+                                            </span>
+                                        </v-col>
+                                    </v-row>
+
+                                    <v-row
+                                        style="display:flex;justify-content:center"
+                                        >
+                                        <v-btn
+                                            style="background-color:black" 
+                                            text  
+                                            class="white--text mr-2 text-capitalize" 
+                                            @click="attemptLogin()">
+                                                
+                                                Login
+
+                                            </v-btn>
+                                    </v-row>
+                                    <!-- </> form fields end here -->
+
+                                    <v-divider class="mt-4"></v-divider>
+
+                                    <!-- elements for back to register -->
+                                    <span 
+                                        style="font-family:Comic Sans MS;font-style:italic"
+                                        >
+                                        Don't have Account
+                                        <router-link to="/head/register" style="color:black">
+                                            Register
+                                        </router-link>
+                                    </span>
+                                </form>
                             </v-card-text>
 
-                            <v-card-actions>
-                                <v-row style="justify-content:center">
-                                    <v-btn color="black" class="white--text" @click="response.login_result ? $router.push({path:'/home'}) : $router.push({path:'/register'}) ">
-                                        OK
-                                    </v-btn>
-
-                                </v-row>
-                            </v-card-actions>
-
-                        </v-card>
-
-                    </v-dialog>
-
-                    <v-col cols="12"  class="d-flex justify-content-center">
-
-                            <v-card shaped style="width:100%">
-
-                                <v-card-title style="background-color:black">
-                                    <h4 style="font-family:Comic Sans MS;color:white">Login</h4>
-                                </v-card-title>
-
-                                <v-card-text>
-
-                                    <form>
-                                        <v-row class="mt-2" dense style="display:flex;justify-content:center">
-                                            <v-col cols="8">
-                                                <v-text-field dense outlined placeholder="eg John@gmail.com" label="Email" color="black" v-model="head.email"    :rules="[() => !!head.email || 'This field is required']" >
-                                                </v-text-field>
-                                                <span class="text-danger" v-if="errors.email">
-                                                    {{errors.email[0]}}
-                                                </span>
-                                            </v-col>
-                                        </v-row>
-
-                                        <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                            <v-col cols="8">
-                                                <v-text-field dense outlined type="password" label="Password" color="black" v-model="head.password"  :rules="[() => !!head.password || 'This field is required']" >
-                                                </v-text-field>
-                                                <span class="text-danger" v-if="errors.password">
-                                                    {{errors.password[0]}}
-                                                </span>
-                                            </v-col>
-
-                                        </v-row>
-                                        <v-row style="display:flex;justify-content:center">
-                                            <v-btn style="background-color:black" text  class="white--text mr-2 text-capitalize" @click="onHeadLogin()">
-                                                Login
-                                            </v-btn>
-                                        </v-row>
-                                        <v-divider class="mt-4"></v-divider>
-                                        <span style="font-family:Comic Sans MS;font-style:italic">Don't have Account
-                                            <router-link to="/head/register" style="text-decoration:none;color:black">Register</router-link>
-                                        </span>
-                                    </form>
-                                </v-card-text>
                         </v-card>
                     </v-col>
 
@@ -91,37 +157,56 @@ import CSRF from './../../Apis/CSRF'
 export default ({
     data(){
         return{
-            head:{email:"",password:""},
+            credentials : {email:'',password:''},
             errors:'',
-            response:[],
-            login_result:null
+            event_response:false,
+            login_response:[],
         }
     },
     created()
     {
-    },
-    methods:{
-        onHeadLogin:function()
-        {
-                let _vue = this;
-                CSRF.getCookies().then(()=>{
-                    User.login(this.head).catch(error => {
-                        if(error.response.status === 422)
-                        {
-                            this.errors = error.response.data.errors;
-                        }
-                    }).then(()=>{
-                        User.fetchUser().then(response => {
-                            this.response.login_response = "Login Successfully";
-                            console.log(this.response);
-                            this.response.login_result = true;
-                            this.login_result = true;
-                            // this.$router.push({path:'/actions'});
-                            _vue.$emit('loggedin',true);
-                        });
-                    });
 
-                });
+    },
+
+    methods:{
+
+        attemptLogin:function() {
+
+                let _vue = this;
+                
+                
+                // @request server to generate specific token and 
+                // set Cokkie for request and response
+
+                CSRF.getCookies().then(()=>{
+
+                    User.login(this.credentials).catch(error => {
+                            if(error.response.status === 422)
+                            {
+                                this.errors = error.response.data.errors;
+                            }})
+                                .then(()=>{
+
+                                    User.fetchUser().catch(fetch_error => {
+
+                                            if(fetch_error.response.status == 401)
+                                            {
+                                                this.errors = error.response.data;
+                                                this.login_response.text = "Unthorized request";
+                                                this.login_response.success = false;
+                                                this.event_response = true;
+                                            }
+                                        })
+                                        .then(response =>
+                                            {
+                                                this.login_response.text = "Login Successfully";
+                                                this.login_response.success = true;
+                                                this.event_response = true;
+                                                // notify .. user is logged in
+                                                _vue.$emit('loggedin',true);
+                                            });
+                                    });
+                    });
 
 
             // axios.get('/api/csrf-cookie').then(data => {
@@ -143,3 +228,15 @@ export default ({
 
 })
 </script>
+
+<style>
+
+    body{
+        font-family: "Open Sans", sans-serif;
+    }    
+
+    .font-Merriweather{
+        font-family: Merriweather,serif;
+    }
+
+</style>

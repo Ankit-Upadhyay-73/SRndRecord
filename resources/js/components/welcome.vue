@@ -39,3 +39,11 @@ import User from './../Apis/User'
         }
 };
 </script>
+
+<style>
+    
+    .v-application{
+         font-family: "Comic Sans MS", sans-serif !important;
+    }
+
+</style>

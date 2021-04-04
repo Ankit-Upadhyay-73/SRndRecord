@@ -54,22 +54,19 @@ class UserController extends Controller
         // return response()->json($user, 201);;
 
 
-        $isAlreadyExists = User::where('phone', $request->phone)->orWhere('email',$request->email)->get()->count();
 
-        if ($isAlreadyExists != 0)
-            return 0;
+        if (User::where('phone', $request->phone)->orWhere('email',$request->email)->exists())
+            return response()->json(["message"=>"You are already registered"])->setStatusCode(422);
         else {
 
             if ($this->headExists($request))
-                return -1;
+                return response()->json(["message"=>"Head of course already exists"])->setStatusCode(422);
             else {
                 $user = $this->createUser($request);
 
                 $role_id = $this->createRole($request);
-                //registering the role
+                
                 $user->role_id = $role_id;
-
-                //saving the user
                 $user->save();
 
                 // add to college_user
@@ -104,55 +101,81 @@ class UserController extends Controller
 
     public function createUser(Request $request)
     {
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->password = Hash::make($request->password);
+        $user = new User(
+                    [
+                        "name"=>$request->name,
+                        "email"=>$request->email,
+                        "phone"=>$request->phone,
+                        "password"=>Hash::make($request->password)
+                    ]
+            );
         return $user;
     }
 
     public function createRole(Request $request)
     {
         //finding the role
-        $role = Role::where("name", "Head")->get();
+        // $role = Role::where("name", "Head")->get();
+        // //finding the role
+        // if ($role->count() == 0) {
+        //     $role = new Role();
+        //     $role->name = "Head";
+        //     $role->display_name = Str::upper("Head");
+        //     $role->save();
+        //     return $role->id;
+        // } else
+        //     return $role[0]->id;
+
+                //finding the role
+        
         //finding the role
-        if ($role->count() == 0) {
-            $role = new Role();
-            $role->name = "Head";
-            $role->display_name = Str::upper("Head");
+
+        if (!Role::where("name", "Head")->exists()) {
+             $role = new Role(
+                    [
+                        "name"=>"Head",
+                        "display_name"=>Str::upper("Head"),
+                    ]);
             $role->save();
             return $role->id;
+
         } else
-            return $role[0]->id;
+            return Role::where("name","Head")->pluck('id')[0]; //to fetch role_id from Collection having one element
+
+        
     }
 
     public function addingToCollege(Request $request)
     {
-        $college = College::where('name', $request->college)->get();
-        if ($college->count() == 0) {
-            $college = new College();
-            $college->name = $request->college;
-            $college->logo = "";
-            $college->address = "";
-            $college->stamp = "";
+        if (!College::where('name', $request->college)->exists()) {
+            $college = new College(
+                [
+                    "name"=>$request->college,
+                    "logo"=>"",
+                    "address"=>"",
+                    "stamp"=>""
+                ]
+            );
             $college->save();
             return $college;
         } else
-            return $college[0];
+            return College::where('name', $request->college)->get()[0];
     }
+
 
     public function addToCourse(Request $request)
     {
-        $course = Course::where("name", $request->course)->get();
 
-        if ($course->count() == 0) {
-            $course = new Course();
-            $course->name = $request->course;
-            $course->duration = 1;
+        if (!Course::where("name", $request->course)->exists()) {
+            $course = new Course(
+                [
+                    "name" => $request->course,
+                    "duration"=>1,
+                ]
+            );
             $course->save();
             return $course;
         }
-        return $course[0];
+        return Course::where("name", $request->course)->get()[0];
     }
 }
