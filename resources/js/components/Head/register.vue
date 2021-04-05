@@ -3,45 +3,56 @@
 
     <v-app>
         <!-- register popup -->
-        <v-dialog 
-            width="50%"
-            v-model="event_response"
-            >
+        <v-row class="space-around" v-if="event_response">
+            <v-col cols="auto">
 
-            <v-card height="100">
-                <v-card-text 
-                    class="black--text"
+                <v-dialog
+                    max-width="50%"
+                    v-model="event_response"
+                    persistent
                     >
 
-                    <h3 style="justify-self:center">
-                        {{register_response.text}}
-                    </h3>
-
-                </v-card-text>
-
-                <v-card-actions>
-
-                        <!-- buttons OK and Cancel  -->
-                        <v-btn
-                            color="black"
-                            @click="register_response.success ? $router.push({path:'/head/login'}) : '' "
+                    <v-card >
+                        <v-card-title>
+                            Registration Response
+                        </v-card-title>
+                        <v-card-text
+                            class="black--text justify-center"
                             >
-                            OK
-                        </v-btn>
 
-                        <v-btn
-                            color="error"
-                            @click="event_response = !event_response"
-                        >
-                            Cancel
+                            <h3 style="justify-self:center">
+                                {{register_response.text}}
+                            </h3>
 
-                        </v-btn>
+                        </v-card-text>
 
-                </v-card-actions>
+                        <v-card-actions>
 
-            </v-card>
+                                <!-- buttons OK and Cancel  -->
+                                <v-btn
+                                    color="black"
+                                    class="white--text"
+                                    @click="register_response.success ? $router.push({path:'/head/login'}) : '' "
+                                    >
+                                    OK
+                                </v-btn>
 
-        </v-dialog> 
+                                <v-btn
+                                    color="error"
+                                    @click="event_response = !event_response"
+                                >
+                                    Cancel
+
+                                </v-btn>
+
+                        </v-card-actions>
+
+                    </v-card>
+
+                </v-dialog>
+
+            </v-col>
+        </v-row>
         <!-- </> registration popup ends here -->
 
 
@@ -52,7 +63,7 @@
                 <v-row class="justify-center">
                     <h3 class="black--text mt-2">
 
-                        Register with Your College, course and Personal details to use services
+                        Register with Your College, course and Personal details to Start using project.
 
                     </h3>
                 </v-row>
@@ -63,8 +74,8 @@
                         md="8"
                         class="d-flex justify-content-center">
 
-                        <v-card 
-                            shaped 
+                        <v-card
+                            shaped
                             style="width:100%">
 
                             <v-card-title
@@ -79,12 +90,12 @@
 
                                 <form class="mt-2">
 
-                                    <v-row 
+                                    <v-row
                                         class="justify-center"
                                         dense >
 
                                         <v-col cols="12" md="8">
-                                            <v-text-field 
+                                            <v-text-field
                                                 dense
                                                 outlined label="College"
                                                 color="black"
@@ -97,12 +108,12 @@
 
                                     </v-row>
 
-                                    <v-row 
+                                    <v-row
                                         class="justify-center"
                                         dense
                                         >
                                         <v-col cols="12" md="8">
-                                            <v-text-field 
+                                            <v-text-field
                                                 dense
                                                 outlined label="Course"
                                                 color="black"
@@ -114,7 +125,7 @@
                                         </v-col>
                                     </v-row>
 
-                                    <v-row 
+                                    <v-row
                                         class="justify-center"
                                         dense
                                         >
@@ -131,13 +142,13 @@
                                                 :rules="[() => !!head.name || 'This field is required']"
                                             >
                                             </v-text-field>
-                                            <span class="annotation">Your Name</span>                                            
+                                            <span class="annotation">Your Name</span>
                                         </v-col>
-                                        
+
                                     </v-row>
 
-                                    <v-row 
-                                        class="justify-center" 
+                                    <v-row
+                                        class="justify-center"
                                         dense
                                         >
                                         <v-col cols="12" md="8">
@@ -145,27 +156,29 @@
                                                 dense outlined label="Phone"
                                                 color="black"
                                                 v-model="head.phone"
+                                                type="number"
                                                 prepend-inner-icon="mdi-dialpad"
                                                 :rules="[() => !!head.phone || 'This field is required']">
 
                                             </v-text-field>
-                                            <span class="annotation">Mobile Number to uniquely identify you</span>                                         
+                                            <span class="annotation">Mobile Number to uniquely identify you</span>
                                         </v-col>
 
                                     </v-row>
 
-                                    <v-row  
-                                        dense 
+                                    <v-row
+                                        dense
                                         class="justify-center"
                                         >
 
                                         <v-col cols="12" md="8">
-                                            <v-text-field 
-                                                dense 
+                                            <v-text-field
+                                                dense
                                                 outlined
                                                 label="Email"
                                                 color="black"
                                                 prepend-inner-icon="mdi-email"
+                                                type="email"
                                                 v-model="head.email"
                                                 :rules="[() => !!head.email || 'This field is required']"
                                             >
@@ -175,13 +188,13 @@
 
                                     </v-row>
 
-                                    <v-row 
+                                    <v-row
                                         class="justify-center"
-                                        dense 
+                                        dense
                                         >
                                         <v-col cols="12" md="8">
 
-                                            <v-text-field  
+                                            <v-text-field
                                                 dense
                                                 outlined
                                                 label="Password"
@@ -250,7 +263,7 @@ export default (
                 register_response:[],
                 event_response:false
             }
-            
+
         },
         methods:{
             attemptRegister(){
@@ -258,42 +271,46 @@ export default (
                 CSRF.getCookies()
                     .then( response=>{
 
-                        if((this.head.name || 
-                            this.head.password || 
-                            this.head.email || 
-                            this.head.college || 
-                            this.head.course || 
+                        if((this.head.name ||
+                            this.head.password ||
+                            this.head.email ||
+                            this.head.college ||
+                            this.head.course ||
                             this.head.phone)!='')
                             {
                                 User.register(this.head)
                                     .catch(error => {
 
+                                        console.log(error);
                                         // input data validation on server
 
-                                        if(error.data.status==406)
+                                        if(error.response.status==406)
                                         {
-                                            this.event_response.success = false;
-                                            this.event_response.text = "Unacceptable Input"
+                                            this.register_response.success = false;
+                                            this.register_response.text = "Unacceptable Input"
                                             this.event_response = true;
                                         }
-                                
+
                                         // if already registered throw 422 the (data can't be processed)
-                                        if(error.data.status==422)
+                                        if(error.response.status==422)
                                         {
-                                            this.event_response.success = false;
-                                            this.event_response.text = "Seems that you are already registered."
+                                            this.register_response.success = false;
+                                            this.register_response.text = "Seems that you are already registered."
                                             this.event_response = true;
                                         }
-                                        
+
                                     })
                                         .then(
                                             (data)=>{
                                                 //registered successfully
-                                                if(data.status==201)
-                                                {
-                                                    this.event_response = true;
-                                                    this.register_response.text = "Registered Successfully";
-                                                    this.register_response.status = true;
+                                                if(data!=undefined){
+                                                    if(data.status==201)
+                                                    {
+                                                        this.event_response = true;
+                                                        this.register_response.text = "Registered Successfully";
+                                                        this.register_response.success = true;
+                                                    }
+
                                                 }
                                         });
                             }

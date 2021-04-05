@@ -16,19 +16,15 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $students = [];
-        $head = $request->user();
-        $college_id =  $head->colleges[0]->id;
-        $students_in_college =  Student::where('college_id', $college_id)->get();
+        $user = $request->user();
+        $college = $user->colleges->sortByDesc('updated_at')->first();
+        $students_in_college =  Student::where('college_id', $college->id)->get();
         foreach ($students_in_college as $student) {
             $students[] = $student->user;
         }
 
         return $students;
 
-        // $role = Role::where('name', 'student')->get();
-        // $role_id = $role[0]["id"];
-        // $user = User::where('role_id', $role_id)->get();
-        // return $user;
     }
 
     public function validateRequest(Request $request)
@@ -39,64 +35,72 @@ class StudentController extends Controller
         ]);
     }
 
-    public function add(Request $request)
+    public function store(Request $request)
     {
         $this->validateRequest($request);
         //Initiating the user
-        $user = User::where('email', $request->email)->get();
-        if ($user->count() != 0) {
-            return response()->json(["message" => "Student Exists"]);
-        } else {
+        if (User::where('email', $request->email)->exists()) {
+            return response()->json(["message" => "User Exists"],400);
+        }
+        else {
+            $user = new User([
+                "name"      =>   $request->name,
+                "email"     =>   $request->email,
+                'phone'     =>   $request->phone,
+                "password"  =>   $request->password
+            ]);
 
-            $user = new User();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            $user->password = $request->password;
             //finding the role
-            $role = Role::where("name", "student")->get();
-            //finding the role
-            if ($role->count() == 0) {
-                $role = new Role();
-                $role->name = "student";
-                $role->display_name = Str::upper("Student");
+            if (!Role::where('name','Student')->exists()){
+                $role = new Role(["name" => "Student","display_name"=> Str::upper("Student")]);
                 $role->save();
-            } else
-                $role = $role[0];
+            }
+            else
+                $role = Role::where('name','Head')->first();
+
             //registering the role
             $user->role_id = $role->id;
 
             //saving the user
             $user->save();
+
             //checking college and courses details
-            if ($request->user()->colleges->count() != 0) {
-                if ($request->user()->courses->count() != 0) {
+            if ($request->user()->colleges()->exists())
+            {
+                if ($request->user()->courses()->exists()) {
                     //saving details to students table
-                    $student = new Student();
-                    $student->user_id = $user->id;
-                    $student->college_id = $request->user()->colleges[0]['id'];
-                    $student->course_id = $request->user()->courses[0]['id'];
+                    $student = new Student(
+                            [
+                                "user_id" => $user->id,
+                                "college_id"=>$request->user()->colleges()->first()->id,
+                                "course_id" =>$request->user()->courses()->first()->id,
+                            ]
+                        );
+
                     $student->save();
 
-                    return response()->json($user);
+                    return response()->json($user,201);
                 }
-            } else {
+            }
+            else {
                 $user->delete();
-                return response()->json(["message" => "Collge and Courses details does not exists"]);
+                return response()->json(["message" => "Collge and Courses details does not exists"],400);
             }
         }
     }
 
     public function show(Request $request, $id)
     {
-        $course_id = $request->user()->courses[0]->id;
+        $course_id = $request->user()->courses()->first()->id;
         // return $studentname = User::find($id);
-        $student  = Student::where(['id' => $id, 'course_id' => $course_id])->get();
-        $student_details = "Not Found";
-        if ($student->count() != 0) {
-            $user_id  = $student[0]->user_id;
-            $student_details = User::find($user_id);
+        $student = [];
+        if (Student::where(['id' => $id, 'course_id' => $course_id])->exists())
+        {
+            $user_id  = Student::find($id)->user->id;
+            $student = User::find($user_id);
         }
-        return response()->json($student_details);
+
+        return response()->json($student);
+
     }
 }

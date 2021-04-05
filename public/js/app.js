@@ -1893,6 +1893,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../Apis/User */ "./resources/js/Apis/User.js");
 /* harmony import */ var _Apis_CSRF__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../Apis/CSRF */ "./resources/js/Apis/CSRF.js");
+/* harmony import */ var _Apis_Api__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../Apis/Api */ "./resources/js/Apis/Api.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2043,8 +2054,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
- // import axios from 'axios';
-// axios.defaults.withCredentials = true
+
+
+ // axios.defaults.withCredentials = true
 // axios.defaults.baseURL='http://127.0.0.1:8000'
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2064,42 +2076,37 @@ __webpack_require__.r(__webpack_exports__);
     attemptLogin: function attemptLogin() {
       var _this = this;
 
-      var _vue = this; // @request server to generate specific token and 
+      var _vue = this; // @request server to generate specific token and
       // set Cokkie for request and response
 
 
       _Apis_CSRF__WEBPACK_IMPORTED_MODULE_1__.default.getCookies().then(function () {
-        _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.login(_this.credentials)["catch"](function (error) {
-          if (error.response.status === 422) {
-            _this.errors = error.response.data.errors;
-          }
-        }).then(function () {
-          _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.fetchUser()["catch"](function (fetch_error) {
+        _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.login(_this.credentials).then(function () {
+          _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.fetchUser(_this.credentials).then(function (response) {
+            if (response.status == 200) {
+              _this.login_response.text = "Login Successfully";
+              _this.login_response.success = true;
+              _this.event_response = true; // notify .. user is logged in
+
+              _vue.$emit('loggedin', true);
+
+              _this.$router.push({
+                path: '/home'
+              });
+            }
+          })["catch"](function (fetch_error) {
             if (fetch_error.response.status == 401) {
-              _this.errors = error.response.data;
               _this.login_response.text = "Unthorized request";
               _this.login_response.success = false;
               _this.event_response = true;
             }
-          }).then(function (response) {
-            _this.login_response.text = "Login Successfully";
-            _this.login_response.success = true;
-            _this.event_response = true; // notify .. user is logged in
-
-            _vue.$emit('loggedin', true);
           });
+        })["catch"](function (error) {
+          if (error.response.status === 422) {
+            _this.errors = error.response.data.errors;
+          }
         });
-      }); // axios.get('/api/csrf-cookie').then(data => {
-      //     axios.post('/login',{
-      //             email:'ankit@gmail.com',
-      //             password:'passpass'
-      //         }).then(() =>{
-      //             axios.get('http://127.0.0.1:8000/api/user').then(() =>{
-      //                     this.$router.push('/actions');
-      //                     //   this.$emit('loggedin',true);
-      //                 });
-      //    });
-      // });
+      });
     }
   }
 });
@@ -2210,6 +2217,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2219,13 +2254,16 @@ __webpack_require__.r(__webpack_exports__);
         'logo': null,
         'stamp': null
       },
-      response: []
+      profile_response: [],
+      event_response: false
     };
   },
   methods: {
     addCollegeLogo: function addCollegeLogo() {},
     addCollegeStamp: function addCollegeStamp() {},
     submitCollegeDetails: function submitCollegeDetails() {
+      var _this = this;
+
       console.log(this.college); // Api.post('/college/update',this.college).then(()=>{
       //     console.log(data);
       // })
@@ -2240,11 +2278,28 @@ __webpack_require__.r(__webpack_exports__);
           headers: {
             'Content-Type': 'multipart/form-data'
           }
-        }).then(function (data) {
-          console.log(data);
+        }).then(function (response) {
+          if (response.status == 200) {
+            _this.event_response = true;
+            _this.profile_response.text = response.data["message"];
+            _this.profile_response.success = true;
+          }
+        })["catch"](function (error) {
+          if (error.response.status == 400) {
+            _this.event_response = true;
+            _this.profile_response.text = response.data["message"];
+            _this.profile_response.success = false;
+          }
         });
       }
     }
+  },
+  created: function created() {
+    var _this2 = this;
+
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/college').then(function (response) {
+      _this2.college = response.data;
+    });
   }
 });
 
@@ -2263,6 +2318,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../Apis/User */ "./resources/js/Apis/User.js");
 /* harmony import */ var _Apis_CSRF__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../Apis/CSRF */ "./resources/js/Apis/CSRF.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2526,25 +2594,28 @@ __webpack_require__.r(__webpack_exports__);
       _Apis_CSRF__WEBPACK_IMPORTED_MODULE_1__.default.getCookies().then(function (response) {
         if ((_this.head.name || _this.head.password || _this.head.email || _this.head.college || _this.head.course || _this.head.phone) != '') {
           _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.register(_this.head)["catch"](function (error) {
-            // input data validation on server
-            if (error.data.status == 406) {
-              _this.event_response.success = false;
-              _this.event_response.text = "Unacceptable Input";
+            console.log(error); // input data validation on server
+
+            if (error.response.status == 406) {
+              _this.register_response.success = false;
+              _this.register_response.text = "Unacceptable Input";
               _this.event_response = true;
             } // if already registered throw 422 the (data can't be processed)
 
 
-            if (error.data.status == 422) {
-              _this.event_response.success = false;
-              _this.event_response.text = "Seems that you are already registered.";
+            if (error.response.status == 422) {
+              _this.register_response.success = false;
+              _this.register_response.text = "Seems that you are already registered.";
               _this.event_response = true;
             }
           }).then(function (data) {
             //registered successfully
-            if (data.status == 201) {
-              _this.event_response = true;
-              _this.register_response.text = "Registered Successfully";
-              _this.register_response.status = true;
+            if (data != undefined) {
+              if (data.status == 201) {
+                _this.event_response = true;
+                _this.register_response.text = "Registered Successfully";
+                _this.register_response.success = true;
+              }
             }
           });
         }
@@ -2698,30 +2769,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2742,20 +2789,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     };
   },
   methods: {
-    findStudent: function findStudent() {
-      var _this = this;
-
-      this.student_exists = false; //find student
-
-      _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/student/' + this.student_id)["catch"](function (error) {
-        if (error.data.status == 401) _this.error_message = "UnAuthorized request";
-        if (error.data.status == 422) _this.error_message = "Invalid input";
-      }).then(function (response) {
-        if (response.data.status == 200) _this.students = response.data["students"];
-      });
-    },
+    // findStudent(){
+    //     this.student_exists = false;
+    //     //find student
+    //     Api.get('/api/student/'+this.student_id).
+    //                 catch(error=>{
+    //                     if(error.data.status==401)
+    //                         this.error_message = "UnAuthorized request";
+    //                     if(error.data.status==422)
+    //                         this.error_message = "Invalid input";
+    //                 }).
+    //                 then((response)=>{
+    //                         if(response.data.status==200)
+    //                             this.students = response.data["students"];
+    //                 });
+    // },
     prepareMarksheet: function prepareMarksheet() {
-      var _this2 = this;
+      var _this = this;
 
       var _iterator = _createForOfIteratorHelper(this.subjects),
           _step;
@@ -2798,23 +2848,23 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             student: this.student_id,
             exam: this.selected_exam,
             year: this.academic_year
+          }).then(function (response) {
+            if (response.data.status == 200) {
+              _this.result_response.success = true;
+              _this.result_response.text = "Marksheet Created Successfully";
+              _this.response_dialog = true;
+            }
           })["catch"](function (error) {
             if (error.data.status == 401) {
-              _this2.result_response.success = false;
-              _this2.result_response.text = "Unauthorized request";
-              _this2.response_dialog = true;
+              _this.result_response.success = false;
+              _this.result_response.text = "Unauthorized request";
+              _this.response_dialog = true;
             }
 
             if (error.data.status == 500) {
-              _this2.result_response.success = false;
-              _this2.result_response.text = "Server issue";
-              _this2.response_dialog = true;
-            }
-          }).then(function (response) {
-            if (response.data.status == 200) {
-              _this2.result_response.success = true;
-              _this2.result_response.text = "Marksheet Created Successfully";
-              _this2.response_dialog = true;
+              _this.result_response.success = false;
+              _this.result_response.text = "Server issue";
+              _this.response_dialog = true;
             }
           });
         }
@@ -2822,22 +2872,21 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   },
   mounted: function mounted() {
-    var _this3 = this;
+    var _this2 = this;
 
-    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/fetchSubjectsWithCourse')["catch"](function (error) {
-      if (error.data.status == 401) {
-        _this3.error_message = "Unauthorized request";
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/students').then(function (response) {
+      _this2.students = response.data;
+    });
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/subjects').then(function (response) {
+      _this2.subjects = response.data;
+      _this2.subject_count = _this2.subjects.length;
+
+      if (_this2.subject_count == 0) {
+        _this2.response_dialog = true;
+        _this2.result_response.text = "Subjects not found";
       }
-    }).then(function (response) {
-      _this3.subjects = response.data;
-      _this3.subject_count = _this3.subjects.length;
 
-      if (_this3.subject_count == 0) {
-        _this3.response_dialog = true;
-        _this3.result_response.text = "Subjects not found";
-      }
-
-      var _iterator2 = _createForOfIteratorHelper(_this3.subjects),
+      var _iterator2 = _createForOfIteratorHelper(_this2.subjects),
           _step2;
 
       try {
@@ -2849,6 +2898,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         _iterator2.e(err);
       } finally {
         _iterator2.f();
+      }
+    })["catch"](function (error) {
+      if (error.data.status == 401) {
+        _this2.error_message = "Unauthorized request";
       }
     });
   }
@@ -2961,6 +3014,46 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -2973,27 +3066,32 @@ __webpack_require__.r(__webpack_exports__);
         password: "",
         phone: ""
       },
-      response_dialog: false,
+      event_response: false,
       student_response: []
     };
   },
   mounted: function mounted() {
-    _Apis_User__WEBPACK_IMPORTED_MODULE_0__.default.fetchUser().then(function (user) {
-      console.log(user);
+    var _this = this;
+
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_1__.default.get('/api/course').then(function (response) {
+      _this.course = response.data;
     });
   },
   methods: {
     onAddStudent: function onAddStudent() {
-      var _this = this;
+      var _this2 = this;
 
-      _Apis_Api__WEBPACK_IMPORTED_MODULE_1__.default.post('/api/student', this.student).then(function (response) {
-        if (response.data["email"] == _this.student.email) {
-          _this.isAdded = true;
-          _this.responseMessage = "Saved Successfully";
-
-          _this.$router.push('/student');
-        } else {
-          _this.responseMessage = response.data["message"];
+      _Apis_Api__WEBPACK_IMPORTED_MODULE_1__.default.post('/api/students', this.student).then(function (response) {
+        if (response.status == 201) {
+          _this2.event_response = true;
+          _this2.student_response.text = "Saved Successfully";
+          _this2.student_response.success = true;
+        }
+      })["catch"](function (error) {
+        if (error.response.status == 400) {
+          _this2.student_response.text = error.response.data["message"];
+          _this2.student_response.success = false;
+          _this2.event_response = true;
         }
       });
     }
@@ -3045,10 +3143,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      course: [],
       headers: [{
         text: 'id',
         align: 'start',
@@ -3069,8 +3170,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   created: function created() {
     var _this = this;
 
-    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/students').then(function (data) {
-      var _iterator = _createForOfIteratorHelper(data["data"]),
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/course').then(function (response) {
+      _this.course = response.data;
+    });
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/students').then(function (dt) {
+      var _iterator = _createForOfIteratorHelper(dt.data),
           _step;
 
       try {
@@ -3102,6 +3206,47 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Apis_Api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../Apis/Api */ "./resources/js/Apis/Api.js");
+/* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../Apis/User */ "./resources/js/Apis/User.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3196,23 +3341,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      subject_response: [],
       subject: {
         name: "",
         weightage: "",
         passing: ""
-      }
+      },
+      course: [],
+      event_response: false
     };
   },
   methods: {
     addSubject: function addSubject() {
-      console.log("isrunning");
-      _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.post('/api/subject', this.subject).then(function (data) {
-        console.log(data);
+      var _this = this;
+
+      _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.post('/api/subjects', this.subject).then(function (response) {
+        if (response.status == 201) {
+          _this.subject_response.success = true;
+          _this.subject_response.text = "Subject Added Successfully";
+          _this.event_response = true;
+        }
+      })["catch"](function (error) {
+        if (error.response.status == 400) {
+          _this.subject_response.success = false;
+          _this.subject_response.text = "Subject Already exists";
+          _this.event_response = true;
+        }
       });
     }
+  },
+  created: function created() {
+    var _this2 = this;
+
+    _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/course').then(function (response) {
+      _this2.course = response.data;
+    });
   }
 });
 
@@ -3236,6 +3403,10 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+//
+//
+//
+//
 //
 //
 //
@@ -3300,21 +3471,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     var _this = this;
 
     _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/subjects').then(function (response) {
-      var _iterator = _createForOfIteratorHelper(data.response),
-          _step;
+      _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/course').then(function (dt) {
+        _this.course = dt.data;
 
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          var subject = _step.value;
-          subject["course"] = _this.course.name;
+        var _iterator = _createForOfIteratorHelper(response.data),
+            _step;
 
-          _this.subjects.push(subject);
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var subject = _step.value;
+            subject.course = _this.course.name;
+            console.log(subject);
+
+            _this.subjects.push(subject);
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
         }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
-      }
+      });
     });
   }
 });
@@ -3388,7 +3564,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../Apis/User */ "./resources/js/Apis/User.js");
-//
 //
 //
 //
@@ -5795,67 +5970,89 @@ var render = function() {
   return _c(
     "v-app",
     [
-      _c(
-        "v-main",
-        [
-          _c(
-            "v-dialog",
-            {
-              attrs: { width: "50%" },
-              model: {
-                value: _vm.event_response,
-                callback: function($$v) {
-                  _vm.event_response = $$v
-                },
-                expression: "event_response"
-              }
-            },
+      _vm.login_response.success
+        ? _c(
+            "v-row",
+            { staticClass: "justify-center", attrs: { dense: "" } },
             [
               _c(
-                "v-card",
+                "v-col",
+                { attrs: { cols: "auto" } },
                 [
                   _c(
-                    "v-card-text",
+                    "v-dialog",
                     {
-                      staticClass: "black--text",
-                      staticStyle: { "font-family": "Comic Sans MS" }
+                      attrs: { "max-width": "50%" },
+                      model: {
+                        value: _vm.login_response.succes,
+                        callback: function($$v) {
+                          _vm.$set(_vm.login_response, "succes", $$v)
+                        },
+                        expression: "login_response.succes"
+                      }
                     },
                     [
-                      _c("h2", { staticStyle: { "justify-self": "center" } }, [
-                        _vm._v(
-                          "\n                        " +
-                            _vm._s(_vm.login_response.text) +
-                            "\n                    "
-                        )
-                      ])
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-card-actions",
-                    [
                       _c(
-                        "v-row",
-                        { staticStyle: { "justify-content": "center" } },
+                        "v-card",
                         [
                           _c(
-                            "v-btn",
+                            "v-card-text",
                             {
-                              staticClass: "white--text",
-                              attrs: { color: "black" },
-                              on: {
-                                click: function($event) {
-                                  _vm.login_response.success
-                                    ? _vm.$router.push({ path: "/home" })
-                                    : _vm.$router.push({ path: "/register" })
-                                }
-                              }
+                              staticClass: "black--text",
+                              staticStyle: { "font-family": "Comic Sans MS" }
                             },
                             [
-                              _vm._v(
-                                "\n                            OK\n                        "
+                              _c(
+                                "h2",
+                                { staticStyle: { "justify-self": "center" } },
+                                [
+                                  _vm._v(
+                                    "\n                            " +
+                                      _vm._s(_vm.login_response.text) +
+                                      "\n                        "
+                                  )
+                                ]
                               )
                             ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c(
+                                "v-row",
+                                {
+                                  staticStyle: { "justify-content": "center" }
+                                },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "white--text",
+                                      attrs: { color: "black" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.login_response.success
+                                            ? _vm.$router.push({
+                                                path: "/home"
+                                              })
+                                            : _vm.$router.push({
+                                                path: "/register"
+                                              })
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                OK\n                            "
+                                      )
+                                    ]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
                           )
                         ],
                         1
@@ -5868,8 +6065,12 @@ var render = function() {
               )
             ],
             1
-          ),
-          _vm._v(" "),
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "v-main",
+        [
           _c(
             "v-container",
             [
@@ -6068,7 +6269,7 @@ var render = function() {
                                       },
                                       [
                                         _vm._v(
-                                          "\n                                            \n                                            Login\n\n                                        "
+                                          "\n\n                                            Login\n\n                                        "
                                         )
                                       ]
                                     )
@@ -6157,6 +6358,114 @@ var render = function() {
       _c(
         "v-main",
         [
+          _vm.event_response
+            ? _c(
+                "v-row",
+                { staticClass: "justify-center" },
+                [
+                  _c(
+                    "v-col",
+                    [
+                      _c(
+                        "v-dialog",
+                        {
+                          attrs: { width: "400" },
+                          model: {
+                            value: _vm.event_response,
+                            callback: function($$v) {
+                              _vm.event_response = $$v
+                            },
+                            expression: "event_response"
+                          }
+                        },
+                        [
+                          _c(
+                            "v-card",
+                            { attrs: { height: "150" } },
+                            [
+                              _c(
+                                "v-card-title",
+                                { staticClass: "black white--text" },
+                                [
+                                  _vm._v(
+                                    "\n\n                           Profile Response\n\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-text",
+                                {
+                                  staticClass: "black--text",
+                                  staticStyle: {
+                                    "font-family": "Comic Sans MS"
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "h3",
+                                    {
+                                      staticStyle: { "justify-self": "center" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.profile_response.text) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c(
+                                    "v-row",
+                                    {
+                                      staticStyle: {
+                                        "justify-content": "center"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "white--text",
+                                          attrs: { color: "black" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.event_response = false
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    OK\n                                "
+                                          )
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            : _vm._e(),
+          _vm._v(" "),
           _c(
             "v-container",
             [
@@ -6166,7 +6475,7 @@ var render = function() {
                 [
                   _c("v-card-title", [
                     _vm._v(
-                      "\n                Add College Details\n            "
+                      "\n                    Add College Details\n                "
                     )
                   ]),
                   _vm._v(" "),
@@ -6182,14 +6491,13 @@ var render = function() {
                             [
                               _c(
                                 "v-col",
-                                { attrs: { md: "8", cols: "12" } },
+                                { attrs: { md: "6", cols: "12" } },
                                 [
                                   _c("v-file-input", {
                                     ref: "logo",
                                     attrs: {
                                       dense: "",
                                       placeholder: "Pick a Logo",
-                                      "prepend-icon": "mdi-camera",
                                       label: "College Logo",
                                       color: "black",
                                       outlined: ""
@@ -6216,14 +6524,13 @@ var render = function() {
                             [
                               _c(
                                 "v-col",
-                                { attrs: { cols: "12", md: "8" } },
+                                { attrs: { cols: "12", md: "6" } },
                                 [
                                   _c("v-file-input", {
                                     ref: "stamp",
                                     attrs: {
                                       dense: "",
                                       placeholder: "Pick a Stamp",
-                                      "prepend-icon": "mdi-camera",
                                       color: "black",
                                       label: "Stamp",
                                       outlined: ""
@@ -6250,7 +6557,7 @@ var render = function() {
                             [
                               _c(
                                 "v-col",
-                                { attrs: { cols: "12", md: "8" } },
+                                { attrs: { cols: "12", md: "6" } },
                                 [
                                   _c("v-text-field", {
                                     attrs: {
@@ -6260,7 +6567,7 @@ var render = function() {
                                         }
                                       ],
                                       dense: "",
-                                      "prepend-inner-icon": "mdi-map-marker",
+                                      "prepend-icon": "mdi-map-marker",
                                       accept:
                                         "image/png, image/jpeg, image/bmp",
                                       placeholder: "College Info",
@@ -6305,7 +6612,7 @@ var render = function() {
                                     },
                                     [
                                       _vm._v(
-                                        "\n                                Update Details\n                            "
+                                        "\n                                    Update Details\n                                "
                                       )
                                     ]
                                   )
@@ -6360,70 +6667,104 @@ var render = function() {
   return _c(
     "v-app",
     [
-      _c(
-        "v-dialog",
-        {
-          attrs: { width: "50%" },
-          model: {
-            value: _vm.event_response,
-            callback: function($$v) {
-              _vm.event_response = $$v
-            },
-            expression: "event_response"
-          }
-        },
-        [
-          _c(
-            "v-card",
-            { attrs: { height: "100" } },
+      _vm.event_response
+        ? _c(
+            "v-row",
+            { staticClass: "space-around" },
             [
-              _c("v-card-text", { staticClass: "black--text" }, [
-                _c("h3", { staticStyle: { "justify-self": "center" } }, [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(_vm.register_response.text) +
-                      "\n                "
-                  )
-                ])
-              ]),
-              _vm._v(" "),
               _c(
-                "v-card-actions",
+                "v-col",
+                { attrs: { cols: "auto" } },
                 [
                   _c(
-                    "v-btn",
+                    "v-dialog",
                     {
-                      attrs: { color: "black" },
-                      on: {
-                        click: function($event) {
-                          _vm.register_response.success
-                            ? _vm.$router.push({ path: "/head/login" })
-                            : ""
-                        }
+                      attrs: { "max-width": "50%", persistent: "" },
+                      model: {
+                        value: _vm.event_response,
+                        callback: function($$v) {
+                          _vm.event_response = $$v
+                        },
+                        expression: "event_response"
                       }
                     },
                     [
-                      _vm._v(
-                        "\n                        OK\n                    "
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-card-title", [
+                            _vm._v(
+                              "\n                        Registration Response\n                    "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-text",
+                            { staticClass: "black--text justify-center" },
+                            [
+                              _c(
+                                "h3",
+                                { staticStyle: { "justify-self": "center" } },
+                                [
+                                  _vm._v(
+                                    "\n                            " +
+                                      _vm._s(_vm.register_response.text) +
+                                      "\n                        "
+                                  )
+                                ]
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "white--text",
+                                  attrs: { color: "black" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.register_response.success
+                                        ? _vm.$router.push({
+                                            path: "/head/login"
+                                          })
+                                        : ""
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                OK\n                            "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { color: "error" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.event_response = !_vm.event_response
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                                Cancel\n\n                            "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
                       )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "error" },
-                      on: {
-                        click: function($event) {
-                          _vm.event_response = !_vm.event_response
-                        }
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\n                        Cancel\n\n                    "
-                      )
-                    ]
+                    ],
+                    1
                   )
                 ],
                 1
@@ -6431,9 +6772,7 @@ var render = function() {
             ],
             1
           )
-        ],
-        1
-      ),
+        : _vm._e(),
       _vm._v(" "),
       _c(
         "v-main",
@@ -6444,7 +6783,7 @@ var render = function() {
               _c("v-row", { staticClass: "justify-center" }, [
                 _c("h3", { staticClass: "black--text mt-2" }, [
                   _vm._v(
-                    "\n\n                    Register with Your College, course and Personal details to use services\n\n                "
+                    "\n\n                    Register with Your College, course and Personal details to Start using project.\n\n                "
                   )
                 ])
               ]),
@@ -6654,6 +6993,7 @@ var render = function() {
                                             outlined: "",
                                             label: "Phone",
                                             color: "black",
+                                            type: "number",
                                             "prepend-inner-icon": "mdi-dialpad",
                                             rules: [
                                               function() {
@@ -6707,6 +7047,7 @@ var render = function() {
                                             label: "Email",
                                             color: "black",
                                             "prepend-inner-icon": "mdi-email",
+                                            type: "email",
                                             rules: [
                                               function() {
                                                 return (
@@ -6916,32 +7257,28 @@ var render = function() {
       _c(
         "v-main",
         [
-          _c("div", [
-            _c(
-              "h3",
-              { attrs: { color: "primary" } },
-              [
-                _vm._v(
-                  "\n\n                Make Sure You have added \n                    "
-                ),
-                _c("router-link", { attrs: { to: { path: "/profile" } } }, [
-                  _vm._v(
-                    "\n                        College Logo and Stamp\n                    "
-                  )
-                ]),
-                _vm._v(
-                  "\n                for college verified MarkSheets\n\n            "
-                )
-              ],
-              1
-            )
-          ]),
-          _vm._v(" "),
           _c(
             "v-container",
             [
-              _c("h2", [
-                _vm._v("\n                Create Marksheet\n            ")
+              _c("v-row", { staticClass: "justify-center mt-4" }, [
+                _c(
+                  "h3",
+                  { attrs: { color: "primary" } },
+                  [
+                    _vm._v(
+                      "\n\n                    Make Sure You have added\n                        "
+                    ),
+                    _c("router-link", { attrs: { to: { path: "/profile" } } }, [
+                      _vm._v(
+                        "\n                            College Logo and Stamp\n                        "
+                      )
+                    ]),
+                    _vm._v(
+                      "\n                    for college verified MarkSheets\n\n                "
+                    )
+                  ],
+                  1
+                )
               ]),
               _vm._v(" "),
               _c(
@@ -6955,25 +7292,12 @@ var render = function() {
                       _c("v-autocomplete", {
                         attrs: {
                           items: _vm.students,
-                          filter: _vm.customFilter,
                           color: "white",
                           "item-text": "name",
-                          label: "State"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: {
-                          items: _vm.students,
-                          "item-text": "name",
                           "item-value": "id",
-                          rounded: "",
-                          outlined: "",
-                          dense: "",
-                          type: "text",
-                          "prepend-icon": "mdi-human-child",
-                          placeholder: "Student Name",
-                          color: "black"
+                          label: "Student",
+                          editable: "",
+                          "prepend-icon": "mdi-human-child"
                         },
                         model: {
                           value: _vm.student_id,
@@ -7053,33 +7377,11 @@ var render = function() {
                   )
                 : _vm._e(),
               _vm._v(" "),
-              _vm.error_message != null
-                ? _c(
-                    "v-row",
-                    {
-                      staticClass: "mt-3",
-                      attrs: { justify: "center", align: "center" }
-                    },
-                    [
-                      _c(
-                        "v-card",
-                        [
-                          _c("v-card-text", { staticClass: "black--text" }, [
-                            _c("h2", [_vm._v(_vm._s(this.error_message))])
-                          ])
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                : _vm._e(),
-              _vm._v(" "),
               _c(
                 "v-row",
                 { attrs: { justify: "center" } },
                 [
-                  _vm.student_exists && _vm.subject_count > 0
+                  _vm.subject_count > 0
                     ? _c(
                         "v-card",
                         { staticClass: "mt-5 p-2", attrs: { width: "90%" } },
@@ -7205,26 +7507,117 @@ var render = function() {
       _c(
         "v-main",
         [
-          _c(
-            "v-row",
-            { attrs: { dense: "" } },
-            [
-              _c("h3", [
-                _vm._v(
-                  "\n                Add New Student in " +
-                    _vm._s(_vm.course.name) +
-                    "\n            "
-                )
-              ]),
-              _vm._v(" "),
-              _c("v-spacer"),
-              _vm._v(" "),
-              _c("v-btn", { attrs: { dark: "" } }, [
-                _vm._v("\n                List Students\n            ")
-              ])
-            ],
-            1
-          ),
+          _vm.event_response
+            ? _c(
+                "v-row",
+                { staticClass: "justify-center" },
+                [
+                  _c(
+                    "v-col",
+                    [
+                      _c(
+                        "v-dialog",
+                        {
+                          attrs: { width: "400" },
+                          model: {
+                            value: _vm.event_response,
+                            callback: function($$v) {
+                              _vm.event_response = $$v
+                            },
+                            expression: "event_response"
+                          }
+                        },
+                        [
+                          _c(
+                            "v-card",
+                            { attrs: { height: "150" } },
+                            [
+                              _c(
+                                "v-card-title",
+                                { staticClass: "black white--text" },
+                                [
+                                  _vm._v(
+                                    "\n\n                            Subject Response\n\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-text",
+                                {
+                                  staticClass: "black--text",
+                                  staticStyle: {
+                                    "font-family": "Comic Sans MS"
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "h3",
+                                    {
+                                      staticStyle: { "justify-self": "center" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.student_response.text) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c(
+                                    "v-row",
+                                    {
+                                      staticStyle: {
+                                        "justify-content": "center"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "white--text",
+                                          attrs: { color: "black" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.student_response.success
+                                                ? _vm.$router.push({
+                                                    path: "/students"
+                                                  })
+                                                : (_vm.event_response = false)
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    OK\n                                "
+                                          )
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            : _vm._e(),
           _vm._v(" "),
           _c("span", [
             _vm._v(
@@ -7235,6 +7628,40 @@ var render = function() {
           _c(
             "v-container",
             [
+              _c(
+                "v-row",
+                { attrs: { dense: "" } },
+                [
+                  _c("h3", [
+                    _vm._v(
+                      "\n                    Add New Student in " +
+                        _vm._s(_vm.course.name) +
+                        "\n                "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { dark: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.$router.push({ path: "/students" })
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    List Students\n                "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
               _c(
                 "v-row",
                 { staticClass: "d-flex", attrs: { dense: "" } },
@@ -7279,7 +7706,7 @@ var render = function() {
                     "v-col",
                     {
                       staticClass: "d-flex justify-content-center",
-                      attrs: { cols: "12" }
+                      attrs: { cols: "12", md: "8" }
                     },
                     [
                       _c(
@@ -7328,13 +7755,15 @@ var render = function() {
                                   [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "8" } },
+                                      { attrs: { cols: "8", md: "6" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
                                             dense: "",
                                             outlined: "",
                                             label: "Name",
+                                            "prepend-inner-icon":
+                                              "mdi-human-child",
                                             color: "black"
                                           },
                                           model: {
@@ -7365,13 +7794,14 @@ var render = function() {
                                   [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "8" } },
+                                      { attrs: { cols: "8", md: "6" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
                                             dense: "",
                                             outlined: "",
                                             label: "Email",
+                                            "prepend-inner-icon": "mdi-email",
                                             color: "black"
                                           },
                                           model: {
@@ -7480,36 +7910,56 @@ var render = function() {
     "v-app",
     [
       _c(
-        "v-row",
+        "v-main",
         [
-          _c("h2", [
-            _vm._v(
-              "\n            Students in " +
-                _vm._s(_vm.course.name) +
-                "\n        "
-            )
-          ]),
-          _vm._v(" "),
-          _c("v-spacer"),
-          _vm._v(" "),
-          _c("v-btn", { attrs: { dark: "" } }, [
-            _vm._v("\n            Add new Student\n        ")
-          ])
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-container",
-        [
-          _c("v-data-table", {
-            staticClass: "elevation-1",
-            attrs: {
-              headers: _vm.headers,
-              items: _vm.students,
-              "items-per-page": 10
-            }
-          })
+          _c(
+            "v-container",
+            [
+              _c(
+                "v-row",
+                { staticClass: "mt-2" },
+                [
+                  _c("h3", [
+                    _vm._v(
+                      "\n                    Students in " +
+                        _vm._s(_vm.course.name) +
+                        "\n                "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { dark: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.$router.push({ path: "/student/create" })
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    Add new Student\n                "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-data-table", {
+                staticClass: "elevation-1 mt-2",
+                attrs: {
+                  headers: _vm.headers,
+                  items: _vm.students,
+                  "items-per-page": 10
+                }
+              })
+            ],
+            1
+          )
         ],
         1
       )
@@ -7546,21 +7996,128 @@ var render = function() {
       _c(
         "v-main",
         [
-          _c("v-row"),
+          _vm.event_response
+            ? _c(
+                "v-row",
+                { staticClass: "justify-center" },
+                [
+                  _c(
+                    "v-col",
+                    [
+                      _c(
+                        "v-dialog",
+                        {
+                          attrs: { width: "400" },
+                          model: {
+                            value: _vm.event_response,
+                            callback: function($$v) {
+                              _vm.event_response = $$v
+                            },
+                            expression: "event_response"
+                          }
+                        },
+                        [
+                          _c(
+                            "v-card",
+                            { attrs: { height: "150" } },
+                            [
+                              _c(
+                                "v-card-title",
+                                { staticClass: "black white--text" },
+                                [
+                                  _vm._v(
+                                    "\n\n                            Subject Response\n\n                        "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-text",
+                                {
+                                  staticClass: "black--text",
+                                  staticStyle: {
+                                    "font-family": "Comic Sans MS"
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "h3",
+                                    {
+                                      staticStyle: { "justify-self": "center" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(_vm.subject_response.text) +
+                                          "\n                            "
+                                      )
+                                    ]
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c(
+                                    "v-row",
+                                    {
+                                      staticStyle: {
+                                        "justify-content": "center"
+                                      }
+                                    },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "white--text",
+                                          attrs: { color: "black" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.subject_response.success
+                                                ? _vm.$router.push({
+                                                    path: "/subjects"
+                                                  })
+                                                : (_vm.event_response = false)
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                    OK\n                                "
+                                          )
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            : _vm._e(),
           _vm._v(" "),
           _c(
             "v-container",
             [
               _c(
-                "h1",
+                "h3",
                 {
-                  staticStyle: {
-                    color: "black",
-                    "font-family": "Times New Roman"
-                  },
+                  staticClass: "black--text mt-2",
                   attrs: { "align-center": "" }
                 },
-                [_vm._v("Add Subject in ")]
+                [_vm._v("Add Subject in " + _vm._s(_vm.course.name))]
               ),
               _vm._v(" "),
               _c(
@@ -7569,9 +8126,8 @@ var render = function() {
                   _c(
                     "v-col",
                     {
-                      staticClass:
-                        "d-flex\n                    justify-content-center",
-                      attrs: { cols: "12" }
+                      staticClass: "justify-center mt-3",
+                      attrs: { cols: "12", md: "8" }
                     },
                     [
                       _c(
@@ -7610,24 +8166,21 @@ var render = function() {
                                 _c(
                                   "v-row",
                                   {
-                                    staticClass: "d-flex",
-                                    staticStyle: {
-                                      display: "flex",
-                                      "justify-content": "center"
-                                    },
+                                    staticClass: "d-flex justify-center",
                                     attrs: { dense: "" }
                                   },
                                   [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "8" } },
+                                      { attrs: { cols: "12", md: "6" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
                                             dense: "",
                                             outlined: "",
                                             label: "Name",
-                                            color: "black"
+                                            color: "black",
+                                            "prepend-inner-icon": "mdi-pen"
                                           },
                                           model: {
                                             value: _vm.subject.name,
@@ -7657,7 +8210,7 @@ var render = function() {
                                   [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "6" } },
+                                      { attrs: { cols: "12", md: "6" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
@@ -7665,6 +8218,7 @@ var render = function() {
                                             outlined: "",
                                             label: "weightage",
                                             color: "black",
+                                            "prepend-inner-icon": "mdi-numeric",
                                             type: "number"
                                           },
                                           model: {
@@ -7681,17 +8235,25 @@ var render = function() {
                                         })
                                       ],
                                       1
-                                    ),
-                                    _vm._v(" "),
+                                    )
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-row",
+                                  { staticClass: "justify-center" },
+                                  [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "6" } },
+                                      { attrs: { cols: "12", md: "6" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
                                             dense: "",
                                             outlined: "",
                                             label: "Passing Mark",
+                                            "prepend-inner-icon": "mdi-numeric",
                                             color: "black",
                                             type: "number"
                                           },
@@ -7717,8 +8279,8 @@ var render = function() {
                                 _c(
                                   "v-row",
                                   {
-                                    staticClass: "d-flex",
-                                    attrs: { dense: "", justify: "center" }
+                                    staticClass: "justify-center",
+                                    attrs: { dense: "" }
                                   },
                                   [
                                     _c(
@@ -7801,43 +8363,60 @@ var render = function() {
     "v-app",
     [
       _c(
-        "v-row",
+        "v-main",
         [
-          _c("h2", [
-            _vm._v(
-              "\n            Subjects In " +
-                _vm._s(_vm.course.name) +
-                "\n        "
-            )
-          ]),
-          _vm._v(" "),
           _c(
-            "v-btn",
-            {
-              attrs: { dark: "", outlined: "" },
-              on: {
-                click: function($event) {
-                  return _vm.$router.push({ path: "/subject/add" })
+            "v-container",
+            [
+              _c(
+                "v-row",
+                {
+                  staticClass: "justify-center",
+                  attrs: { dense: "", justify: "center" }
+                },
+                [
+                  _c("h3", [
+                    _vm._v(
+                      "\n                    Subjects In " +
+                        _vm._s(_vm.course.name) +
+                        "\n                "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "black--text",
+                      attrs: { outlined: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.$router.push({ path: "/subject/create" })
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    Add New Subject\n                "
+                      )
+                    ]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-data-table", {
+                staticClass: "elevation-1 mt-2",
+                attrs: {
+                  headers: _vm.headers,
+                  items: _vm.subjects,
+                  "items-per-page": 10
                 }
-              }
-            },
-            [_vm._v("\n            Add New Subject\n        ")]
+              })
+            ],
+            1
           )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-container",
-        [
-          _c("v-data-table", {
-            staticClass: "elevation-1",
-            attrs: {
-              headers: _vm.headers,
-              items: _vm.subjects,
-              "items-per-page": 10
-            }
-          })
         ],
         1
       )
@@ -7900,12 +8479,7 @@ var render = function() {
                         [
                           _c(
                             "h1",
-                            {
-                              staticStyle: {
-                                color: "white",
-                                "font-family": "Roboto"
-                              }
-                            },
+                            { staticStyle: { color: "white" } },
                             [
                               _vm._v(
                                 "\n                            Welcome back " +
@@ -8148,157 +8722,144 @@ var render = function() {
             1
           ),
           _vm._v(" "),
-          _c(
-            "v-navigation-drawer",
-            {
-              staticStyle: { "background-color": "#ebecf0" },
-              attrs: { absolute: "", temporary: "" },
-              model: {
-                value: _vm.drawer_status,
-                callback: function($$v) {
-                  _vm.drawer_status = $$v
+          !_vm.showLoginRegisterMenu
+            ? _c(
+                "v-navigation-drawer",
+                {
+                  staticStyle: { "background-color": "#ebecf0" },
+                  attrs: {
+                    app: "",
+                    permanent: _vm.$vuetify.breakpoint.mdAndUp
+                  },
+                  model: {
+                    value: _vm.drawer_status,
+                    callback: function($$v) {
+                      _vm.drawer_status = $$v
+                    },
+                    expression: "drawer_status"
+                  }
                 },
-                expression: "drawer_status"
-              }
-            },
-            [
-              _c(
-                "v-list",
                 [
-                  _c(
-                    "div",
-                    {
-                      staticStyle: {
-                        border: "1px solid black",
-                        padding: "60px",
-                        margin: "10px"
-                      }
-                    },
-                    [
-                      _c(
-                        "span",
-                        {
-                          staticStyle: {
-                            "font-family": "Comic Sans MS",
-                            color: "#000000"
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                        Create M.\n                    "
-                          )
-                        ]
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "span",
-                    {
-                      staticStyle: {
-                        "font-family": "Comic Sans MS",
-                        "text-decoration": "underline",
-                        "font-weight": "bold",
-                        color: "#808080"
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\n                        Actions\n                "
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _vm._l(_vm.actions, function(item) {
-                    return _c(
-                      "v-list-group",
+                  _c("v-list", [
+                    _c(
+                      "div",
                       {
-                        key: item.title,
-                        attrs: { color: "black", dense: "", "no-action": "" },
-                        scopedSlots: _vm._u(
-                          [
-                            {
-                              key: "activator",
-                              fn: function() {
-                                return [
-                                  _c(
-                                    "v-list-item-content",
-                                    [
-                                      _c("v-list-item-title", {
-                                        staticStyle: {
-                                          "font-family": "Times New Roman"
-                                        },
-                                        domProps: {
-                                          textContent: _vm._s(item.title)
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  )
-                                ]
-                              },
-                              proxy: true
-                            }
-                          ],
-                          null,
-                          true
-                        ),
-                        model: {
-                          value: item.active,
-                          callback: function($$v) {
-                            _vm.$set(item, "active", $$v)
-                          },
-                          expression: "item.active"
+                        staticStyle: {
+                          border: "1px solid black",
+                          padding: "60px",
+                          margin: "10px"
                         }
                       },
                       [
-                        _vm._v(" "),
-                        _vm._l(item.to, function(subActions) {
-                          return _c(
-                            "v-list-item",
-                            { key: subActions.to },
-                            [
-                              _c("v-icon", [
-                                _vm._v(
-                                  "\n                            " +
-                                    _vm._s(subActions.icon) +
-                                    "\n                        "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c("v-spacer"),
-                              _vm._v(" "),
-                              _c(
-                                "v-list-item-content",
-                                [
-                                  _c("router-link", {
-                                    staticStyle: {
-                                      "text-decoration": "none",
-                                      color: "#808080",
-                                      "font-family": "Comic Sans MS"
-                                    },
-                                    attrs: { to: subActions.path },
-                                    domProps: {
-                                      textContent: _vm._s(subActions.title)
-                                    }
-                                  })
-                                ],
-                                1
-                              )
-                            ],
-                            1
+                        _c("span", { attrs: { color: "black" } }, [
+                          _vm._v(
+                            "\n                        Create M.\n                    "
                           )
-                        })
-                      ],
-                      2
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "span",
+                      {
+                        staticStyle: {
+                          "font-family": "Comic Sans MS",
+                          "text-decoration": "underline",
+                          "font-weight": "bold",
+                          color: "#808080"
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                        Actions\n                "
+                        )
+                      ]
                     )
-                  })
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-list",
+                    _vm._l(_vm.actions, function(item) {
+                      return _c(
+                        "v-list-group",
+                        {
+                          key: item.title,
+                          attrs: {
+                            color: "black",
+                            dense: "",
+                            "active-class": "black--text",
+                            "no-action": ""
+                          },
+                          scopedSlots: _vm._u(
+                            [
+                              {
+                                key: "activator",
+                                fn: function() {
+                                  return [
+                                    _c(
+                                      "v-list-item-content",
+                                      [
+                                        _c("v-list-item-title", {
+                                          domProps: {
+                                            textContent: _vm._s(item.title)
+                                          }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ],
+                            null,
+                            true
+                          ),
+                          model: {
+                            value: item.active,
+                            callback: function($$v) {
+                              _vm.$set(item, "active", $$v)
+                            },
+                            expression: "item.active"
+                          }
+                        },
+                        [
+                          _vm._v(" "),
+                          _vm._l(item.to, function(subActions) {
+                            return _c(
+                              "v-list-item",
+                              {
+                                key: subActions.path,
+                                attrs: { to: subActions.path }
+                              },
+                              [
+                                _c(
+                                  "v-list-item-icon",
+                                  [
+                                    _c("v-icon", [
+                                      _vm._v(_vm._s(subActions.icon))
+                                    ])
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c("v-list-item-title", [
+                                  _vm._v(_vm._s(subActions.title))
+                                ])
+                              ],
+                              1
+                            )
+                          })
+                        ],
+                        2
+                      )
+                    }),
+                    1
+                  )
                 ],
-                2
+                1
               )
-            ],
-            1
-          ),
+            : _vm._e(),
           _vm._v(" "),
           _c("router-view", { on: { loggedin: _vm.onLoggedIn } })
         ],
@@ -8358,7 +8919,7 @@ var render = function() {
               attrs: { dark: "" },
               on: {
                 click: function($event) {
-                  return _vm.$router.push("/welcome")
+                  return _vm.$router.push("/head/login")
                 }
               }
             },

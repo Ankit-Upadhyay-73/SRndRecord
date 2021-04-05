@@ -9,7 +9,7 @@
                 Thanks For Using Student Result And Record <b>):</b> Be Connected For Further Marksheet Creations.
             </span>
 
-            <v-btn dark @click="$router.push('/welcome')">
+            <v-btn dark @click="$router.push('/head/login')">
                 Home
             </v-btn>
 

@@ -1,7 +1,7 @@
 <template>
         <v-app>
             <v-main>
-                
+
                 <!-- layout appbar including title, drawer & Login,Logout Options -->
                 <v-app-bar
                     style="background-color: black">
@@ -62,7 +62,7 @@
                         v-on:click="$router.push({path:'/head/login'});">
                         Login
                     </v-btn>
-                
+
                     <v-btn v-if="showLoginRegisterMenu"
                             style="background-color:black;font-family:Comic Sans MS"
                             class="white--text text-capitalize text-bold"
@@ -72,20 +72,21 @@
                     </v-btn>
                     <!-- </> end login and register btn  ection-->
 
-                </v-app-bar>                
+                </v-app-bar>
 
                 <!-- <> drawer starts here -->
-                <v-navigation-drawer absolute
-                    temporary
+                <v-navigation-drawer v-if="!showLoginRegisterMenu"
+                    app
+                    :permanent="$vuetify.breakpoint.mdAndUp"
                     style="background-color:#ebecf0"
                     v-model="drawer_status">
 
-                    <v-list
-                        >
+                    <v-list>
                         <div
                             style="border:1px solid black;padding:60px;margin:10px">
                             <span
-                                style="font-family:Comic Sans MS;color:#000000;">
+                                color="black"
+                              >
                                 Create M.
                             </span>
                         </div>
@@ -95,47 +96,45 @@
                                 Actions
                         </span>
 
+                    </v-list>
+
+                    <v-list>
                         <v-list-group
                             color="black"
                             dense
                             v-for="item in actions"
                             v-model="item.active"
                             :key="item.title"
-
+                            active-class="black--text"
                             no-action>
                             <template v-slot:activator>
 
                                 <v-list-item-content>
-                                    <v-list-item-title v-text="item.title" style="font-family:Times New Roman">
+                                    <v-list-item-title v-text="item.title">
                                     </v-list-item-title>
                                 </v-list-item-content>
 
                             </template>
 
-                           <v-list-item
+                            <v-list-item
                                 v-for="subActions in item.to"
-                                :key="subActions.to">
-                                <v-icon>
-                                    {{subActions.icon}}
-                                </v-icon>
+                                :key="subActions.path"
+                                :to="subActions.path"
+                                >
 
-                                <v-spacer></v-spacer>
-
-                                <v-list-item-content>
-                                    <router-link 
-                                        style="text-decoration:none;color:#808080;font-family:Comic Sans MS" 
-                                        :to="subActions.path" 
-                                        v-text="subActions.title">
-                                    </router-link>
-                                </v-list-item-content>
+                                <v-list-item-icon>
+                                    <v-icon>{{ subActions.icon }}</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-title>{{ subActions.title }}</v-list-item-title>
 
                             </v-list-item>
+
                         </v-list-group>
                     </v-list>
 
                 </v-navigation-drawer>
 
-                    
+
                 <!-- <> components dyamically updates here -->
                 <!-- event to check user is logged in or not -->
                 <router-view @loggedin="onLoggedIn"></router-view>
@@ -157,7 +156,7 @@ export default ({
                 showLoginRegisterMenu:true,
                 drawer_status:false,
                 uname : "",
-                items: 
+                items:
                 [
                     { title: 'LogOut', path:'/logout'},
                     { title: 'Profile',path:'/profile'}
@@ -165,7 +164,7 @@ export default ({
 
                 actions:
                 [
-                    { 
+                    {
                         title:'Student',Subtitle:'Student Operations',
                         to:[
                                 {path:'/student/create',title:'Add',icon:'mdi-creation'},
@@ -173,7 +172,7 @@ export default ({
                             ]
                     },
 
-                    { 
+                    {
                         title:'Subject',active:true,Subtitle:'Subject Operations',
                         to:[
                                 {path:'/subject/create',title:'Add',icon:'mdi-creation'},
@@ -181,7 +180,7 @@ export default ({
                             ]
                     },
 
-                    { 
+                    {
                         title:'Marksheet',Subtitle:'Create MarkSheet',
                         to:[
                                 {path:'/marksheet/create',title:'Create',icon:'mdi-creation'}
@@ -197,7 +196,7 @@ export default ({
             //first set session and then send requets to server for fetching users details
 
             User.fetchUser().
-            
+
                 then(response => {
 
                         if(response.data!=undefined)
@@ -209,7 +208,7 @@ export default ({
 
                     }).catch(error=>{
                             if(error.response.status==401){
-                                
+
                             }
                         });
             },

@@ -53,19 +53,17 @@ class UserController extends Controller
 
         // return response()->json($user, 201);;
 
-
-
-        if (User::where('phone', $request->phone)->orWhere('email',$request->email)->exists())
-            return response()->json(["message"=>"You are already registered"])->setStatusCode(422);
+        if (User::where('phone', $request->phone)->orWhere('email', $request->email)->exists())
+            return response()->json(["message" => "You are already registered"])->setStatusCode(422);
         else {
 
             if ($this->headExists($request))
-                return response()->json(["message"=>"Head of course already exists"])->setStatusCode(422);
+                return response()->json(["message" => "Head of course already exists"])->setStatusCode(422);
             else {
                 $user = $this->createUser($request);
 
                 $role_id = $this->createRole($request);
-                
+
                 $user->role_id = $role_id;
                 $user->save();
 
@@ -102,13 +100,13 @@ class UserController extends Controller
     public function createUser(Request $request)
     {
         $user = new User(
-                    [
-                        "name"=>$request->name,
-                        "email"=>$request->email,
-                        "phone"=>$request->phone,
-                        "password"=>Hash::make($request->password)
-                    ]
-            );
+            [
+                "name" => $request->name,
+                "email" => $request->email,
+                "phone" => $request->phone,
+                "password" => Hash::make($request->password)
+            ]
+        );
         return $user;
     }
 
@@ -126,23 +124,23 @@ class UserController extends Controller
         // } else
         //     return $role[0]->id;
 
-                //finding the role
-        
+        //finding the role
+
         //finding the role
 
         if (!Role::where("name", "Head")->exists()) {
-             $role = new Role(
-                    [
-                        "name"=>"Head",
-                        "display_name"=>Str::upper("Head"),
-                    ]);
+            $role = new Role(
+                [
+                    "name" => "Head",
+                    "display_name" => Str::upper("Head"),
+                ]
+            );
             $role->save();
             return $role->id;
-
         } else
-            return Role::where("name","Head")->pluck('id')[0]; //to fetch role_id from Collection having one element
+            return Role::where("name", "Head")->pluck('id')[0]; //to fetch role_id from Collection having one element
 
-        
+
     }
 
     public function addingToCollege(Request $request)
@@ -150,10 +148,10 @@ class UserController extends Controller
         if (!College::where('name', $request->college)->exists()) {
             $college = new College(
                 [
-                    "name"=>$request->college,
-                    "logo"=>"",
-                    "address"=>"",
-                    "stamp"=>""
+                    "name" => $request->college,
+                    "logo" => "",
+                    "address" => "",
+                    "stamp" => ""
                 ]
             );
             $college->save();
@@ -170,7 +168,7 @@ class UserController extends Controller
             $course = new Course(
                 [
                     "name" => $request->course,
-                    "duration"=>1,
+                    "duration" => 1,
                 ]
             );
             $course->save();

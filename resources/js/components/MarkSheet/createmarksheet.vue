@@ -6,22 +6,18 @@
         <v-main>
 
             <!-- something like alert to aware them about marksheet logo and stamp -->
-            <div>
-                <h3 color="primary">
-
-                    Make Sure You have added 
-                        <router-link :to="{path:'/profile'}">
-                            College Logo and Stamp
-                        </router-link>
-                    for college verified MarkSheets
-
-                </h3>
-            </div>
-
             <v-container>
-                <h2>
-                    Create Marksheet
-                </h2>
+                <v-row class="justify-center mt-4">
+                    <h3 color="primary">
+
+                        Make Sure You have added
+                            <router-link :to="{path:'/profile'}">
+                                College Logo and Stamp
+                            </router-link>
+                        for college verified MarkSheets
+
+                    </h3>
+                </v-row>
 
                 <!-- fields to input student detail for marksheet-->
 
@@ -31,26 +27,16 @@
 
                         <v-autocomplete
                             :items="students"
-                            :filter="customFilter"
                             color="white"
                             item-text="name"
-                            label="State"
+                            item-value="id"
+                            label="Student"
+                            editable
+                            prepend-icon="mdi-human-child"
+                            v-model="student_id"
                             >
 
                         </v-autocomplete>
-
-                        <v-text-field
-                            :items="students"
-                            item-text="name"
-                            item-value="id"
-                            rounded
-                            outlined
-                            dense
-                            type="text"
-                            v-model="student_id"
-                            prepend-icon="mdi-human-child"
-                            placeholder="Student Name" color="black">
-                        </v-text-field>
 
                     </v-col>
 
@@ -89,24 +75,14 @@
                 <v-divider class="mt-5"></v-divider>
 
                 <!-- Display Subject in the course -->
-                
+
                 <span style="font-family:Comic Sans MS;font-style:Italic" v-if="subject_count > 0">Subject Details</span>
 
                 <!-- <span class="text-center">Subjects in {{course}}</span> -->
 
-                <v-row justify="center" align="center" v-if="error_message!=null" class="mt-3">
-                    <v-card>
-                        <v-card-text class="black--text">
-
-                            <h2>{{this.error_message}}</h2>
-
-                        </v-card-text>
-                    </v-card>
-                </v-row>
-
                 <!-- fields to input marks obtained in each subject -->
                 <v-row justify="center">
-                    <v-card class="mt-5 p-2" v-if="student_exists && subject_count>0" width="90%">
+                    <v-card class="mt-5 p-2" v-if="subject_count>0" width="90%">
                         <v-row>
                             <v-col cols="4">
                                 <span>Name</span>
@@ -173,22 +149,22 @@ export default
 
         methods:{
 
-            findStudent(){
-                this.student_exists = false;
-                //find student
-                Api.get('/api/student/'+this.student_id).
-                            catch(error=>{
-                                if(error.data.status==401)
-                                    this.error_message = "UnAuthorized request";
+            // findStudent(){
+            //     this.student_exists = false;
+            //     //find student
+            //     Api.get('/api/student/'+this.student_id).
+            //                 catch(error=>{
+            //                     if(error.data.status==401)
+            //                         this.error_message = "UnAuthorized request";
 
-                                if(error.data.status==422)
-                                    this.error_message = "Invalid input";
-                            }).
-                            then((response)=>{
-                                    if(response.data.status==200)
-                                        this.students = response.data["students"];
-                            });
-            },
+            //                     if(error.data.status==422)
+            //                         this.error_message = "Invalid input";
+            //                 }).
+            //                 then((response)=>{
+            //                         if(response.data.status==200)
+            //                             this.students = response.data["students"];
+            //                 });
+            // },
 
 
             prepareMarksheet(){
@@ -196,7 +172,7 @@ export default
                 for(let subject of this.subjects)
                 {
                     if(subject.obtained > subject.total){
-                        this.invalid_marks  = true;                        
+                        this.invalid_marks  = true;
                     }
                 }
 
@@ -231,23 +207,8 @@ export default
                                         {
                                             subjects:this.subjects,student:this.student_id,exam:this.selected_exam,year:this.academic_year
                                         }
-                                    ).catch(error=>{
-
-                                        if(error.data.status==401)
-                                        {
-                                            this.result_response.success = false;
-                                            this.result_response.text = "Unauthorized request";
-                                            this.response_dialog = true;
-                                        }
-
-                                        if(error.data.status==500)
-                                        {
-                                            this.result_response.success = false;
-                                            this.result_response.text = "Server issue";
-                                            this.response_dialog = true;
-                                        }
-
-                                    }).then(response =>{
+                                    ).
+                                    then(response =>{
 
                                         if(response.data.status==200)
                                         {
@@ -255,8 +216,25 @@ export default
                                             this.result_response.text = "Marksheet Created Successfully";
                                             this.response_dialog = true;
                                         }
-                                            
-                                    });
+
+                                    }).
+                                        catch(error=>{
+
+                                            if(error.data.status==401)
+                                            {
+                                                this.result_response.success = false;
+                                                this.result_response.text = "Unauthorized request";
+                                                this.response_dialog = true;
+                                            }
+
+                                            if(error.data.status==500)
+                                            {
+                                                this.result_response.success = false;
+                                                this.result_response.text = "Server issue";
+                                                this.response_dialog = true;
+                                            }
+
+                                        });
                         }
                     }
                 }
@@ -264,15 +242,14 @@ export default
 
         mounted(){
 
-            Api.get('/api/fetchSubjectsWithCourse').
-                catch(error =>
-                        {
-                            if(error.data.status==401){
-                                this.error_message = "Unauthorized request";
-                            }
+            Api.get('/api/students').then(response =>{
 
-                        }) .then(response=>{
-                                    
+                this.students =  response.data;
+
+            });
+
+            Api.get('/api/subjects')
+                            .then(response=>{
                                     this.subjects = response.data;
                                     this.subject_count = this.subjects.length;
 
@@ -286,7 +263,13 @@ export default
                                         subject.obtained = 0;
                                     }
 
-                            });
+                            }).catch(error =>
+                                {
+                                    if(error.data.status==401){
+                                        this.error_message = "Unauthorized request";
+                                    }
+
+                                });
         }
     }
 </script>

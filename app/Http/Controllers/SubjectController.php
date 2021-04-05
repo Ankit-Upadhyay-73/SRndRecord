@@ -14,36 +14,40 @@ class SubjectController extends Controller
     public function store(Request $request)
     {
         //
-        $user = User::findOrFail($request->user()->id);
-        $course = $user->courses[0];
-        $subject = $this->addSubject($request);
-        //inserting into course_subject
-        $course->subjects()->attach($subject->id);
-        return true;
+        $user = $request->user();
+        $course = $user->courses()->latest('updated_at')->first();
+        if($this->addSubject($request))
+           {
+                $added_subject = Subject::where('name',$request->name)->first();
+                 //inserting into course_subject
+                $course->subjects()->attach($added_subject->id);
+                return response()->json($added_subject,201);
+           }
+        return response()->json(["message"=>"Subject Already Exists"],400);
     }
 
     public function addSubject(Request $request)
     {
-        $subject = Subject::where("name", $request->name)->get();
-        if ($subject->count() == 0) {
-            $subject = new Subject();
-            $subject->name = $request->name;
-            $subject->total = $request->weightage;
-            $subject->passing = $request->passing;
+        if (!Subject::where("name", $request->name)->exists()) {
+            $subject = new Subject([
+                'name'      =>  $request->name,
+                'total'     =>  $request->weightage,
+                'passing'   =>  $request->passing
+            ]);
             $subject->save();
-            return $subject;
+            return true;
         }
-        return $subject[0];
+        return false;
     }
 
     public function index(Request $request)
     {
         $user = User::findOrFail($request->user()->id);
-        return $user->courses[0]->subjects;
+        return $user->courses->sortByDesc('updated_at')->first()->subjects;
     }
 
-    public function fetchSubjectsWithCourse(Request $request)
+    public function course(Request $request)
     {
-        return $request->user()->courses[0]->subjects;
+        return $request->user()->courses->sortByDesc('updated_at')->first();
     }
 }

@@ -2,31 +2,35 @@
 
     <v-app>
 
-        <v-row>
+        <v-main>
 
-            <h2>
-                Subjects In {{course.name}}
-            </h2>
+            <v-container>
 
-            <v-btn dark outlined @click="$router.push({path:'/subject/add'})">
-                Add New Subject
-            </v-btn>
+                <v-row dense justify="center" class="justify-center">
 
-        </v-row>
+                    <h3>
+                        Subjects In {{course.name}}
+                    </h3>
+                    <v-spacer></v-spacer>
+                    <v-btn class="black--text" outlined @click="$router.push({path:'/subject/create'})">
+                        Add New Subject
+                    </v-btn>
 
-        <v-container>
+                </v-row>
 
-            <v-data-table 
-                :headers="headers" 
-                :items="subjects" 
-                :items-per-page="10"
-                class="elevation-1"
+                <v-data-table
+                    :headers="headers"
+                    :items="subjects"
+                    :items-per-page="10"
+                    class="elevation-1 mt-2"
+                    >
 
-                >
+                </v-data-table>
 
-            </v-data-table>
+            </v-container>
 
-        </v-container>
+        </v-main>
+
     </v-app>
 
 </template>
@@ -42,7 +46,7 @@ export default {
 
             course:[],
 
-            headers: 
+            headers:
                 [
                     {text: 'Name',align: 'start',sortable: false,value: 'name'},
                     { text: 'Weightage',sortable: true, value: 'total',},
@@ -62,11 +66,19 @@ export default {
 
             Api.get('/api/subjects').then(response=>
                 {
-                    for(let subject of data.response)
-                    {
-                        subject["course"] = this.course.name;
-                        this.subjects.push(subject);
-                    }
+                    Api.get('/api/course').then(dt =>{
+
+                        this.course = dt.data;
+
+                        for(let subject of response.data)
+                        {
+                            subject.course = this.course.name;
+                            console.log(subject);
+                            this.subjects.push(subject);
+                        }
+
+                    });
+
                 });
 
         }

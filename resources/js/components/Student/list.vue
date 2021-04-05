@@ -1,23 +1,25 @@
 <template>
 
     <v-app>
+        <v-main>
+            <v-container>
 
-        <v-row>
-            <h2>
-                Students in {{course.name}}
-            </h2>
-            <v-spacer></v-spacer>
-            <v-btn dark>
-                Add new Student
-            </v-btn>
-        </v-row>
+                <v-row class="mt-2">
+                    <h3>
+                        Students in {{course.name}}
+                    </h3>
+                    <v-spacer></v-spacer>
+                    <v-btn dark @click="$router.push({path:'/student/create'})">
+                        Add new Student
+                    </v-btn>
+                </v-row>
 
-        <v-container>
-            <v-data-table :headers="headers" :items="students" :items-per-page="10" class="elevation-1">
+                <v-data-table :headers="headers" :items="students" :items-per-page="10" class="elevation-1 mt-2">
 
-            </v-data-table>
+                </v-data-table>
 
-        </v-container>
+            </v-container>
+        </v-main>
     </v-app>
 
 </template>
@@ -28,7 +30,8 @@ import Api from './../../Apis/Api';
             export default {
                 data () {
                   return {
-                        headers: 
+                        course:[],
+                        headers:
                         [
                             { text: 'id',align: 'start',value: 'id'},
                             { text: 'Name',value: 'name'},
@@ -41,14 +44,18 @@ import Api from './../../Apis/Api';
                 },
                 created(){
 
-                    Api.get('/api/students').then((data)=>{
+                    Api.get('/api/course').then(response=>{
+                       this.course =  response.data;
+                    });
 
-                        for(let student of data["data"])
+                    Api.get('/api/students').then((dt)=>{
+                        for(let student of dt.data)
                         {
                             this.students.push(student);
                         }
 
                     });
+
 
                 }
 
