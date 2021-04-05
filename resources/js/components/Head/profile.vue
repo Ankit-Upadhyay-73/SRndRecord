@@ -47,6 +47,17 @@
                         <v-form>
                             <v-row
                                 justify="center">
+
+                                <v-col
+                                    md="6" cols="12">
+
+                                    <v-img :src="fetchedCollege.logo">
+
+                                    </v-img>
+
+
+                                </v-col>
+
                                 <v-col
                                     md="6" cols="12">
                                     <v-file-input
@@ -65,6 +76,16 @@
 
                             <v-row justify="center">
 
+                                <v-col
+                                    md="6" cols="12">
+
+                                    <v-img :src="fetchedCollege.stamp" >
+
+                                    </v-img>
+
+                                </v-col>
+
+
                                 <v-col cols="12" md="6">
                                     <v-file-input
                                         dense
@@ -77,6 +98,7 @@
                                         outlined
                                     ></v-file-input>
                                 </v-col>
+
                             </v-row>
                             <v-row justify="center">
                                 <v-col cols="12" md="6">
@@ -130,6 +152,7 @@ export default ({
                 college:{'address':"",'logo':null,'stamp':null},
                 profile_response:[],
                 event_response:false,
+                fetchedCollege:[]
         }
 
     },
@@ -194,7 +217,7 @@ export default ({
 
         Api.get('/api/college').then(response=>{
 
-            this.college = response.data;
+            this.fetchedCollege = response.data;
 
         });
 

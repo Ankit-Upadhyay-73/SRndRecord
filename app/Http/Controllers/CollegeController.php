@@ -6,7 +6,9 @@ use App\Models\College;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use SebastianBergmann\Environment\Console;
 
 class CollegeController extends Controller
 {
@@ -33,12 +35,15 @@ class CollegeController extends Controller
         $stamp_extension = $stamp->getClientOriginalExtension();
         $logo = $request->file('logo');
         $logo_extension = $logo->getClientOriginalExtension();
-        Storage::disk('public')->put(Carbon::now()->toDateString()."_".$college->name . '_stamp' . '.' . $stamp_extension, File::get($stamp));
-        Storage::disk('public')->put(Carbon::now()->toDateString()."_".$college->name . '_logo' . '.' . $logo_extension, File::get($logo));
+        $logo_hash = strval(Hash::make($request->file('logo')->getClientOriginalName()));
+
+        $stamp_hash = strval(Hash::make($request->file('stamp')->getClientOriginalName()));
+        Storage::disk('public')->put($logo_hash. '.' . $stamp_extension, File::get($stamp));
+        Storage::disk('public')->put($stamp_hash. '.' . $logo_extension, File::get($logo));
 
         $college->address = $request->address;
-        $college->logo = $request->file('logo')->getClientOriginalName();
-        $college->stamp = $request->file('stamp')->getClientOriginalName();
+        $college->logo = $logo_hash;
+        $college->stamp = $stamp_hash;
         $isSaved = $college->save();
 
         if ($isSaved) {
@@ -49,12 +54,14 @@ class CollegeController extends Controller
 
     public function show(Request $request){
 
-        $college_id = $request->user()->colleges->sortByDesc('updated_id')->first();
+        $college_id = $request->user()->colleges->sortByDesc('updated_id')->first()->id;
         $college =  College::find($college_id);
         $name = $college->name;
+        $logo = $college->logo;
+        $stamp = $college->stamp;
         $address = $college->address;
-        $logoPath = Storage::disk('public')->get('[*]'+"_"+$name+"_logo");
-        $stampPath = Storage::disk('public')->get('[*]'+"_"+$name+"_logo");
+        $logoPath = Storage::disk('public')->get($logo.'.png');
+        $stampPath = Storage::disk('public')->get($stamp.'.png');
 
         $response_college = [];
 
