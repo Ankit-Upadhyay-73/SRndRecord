@@ -2245,6 +2245,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
@@ -2255,11 +2268,14 @@ __webpack_require__.r(__webpack_exports__);
         'stamp': null
       },
       profile_response: [],
-      event_response: false
+      event_response: false,
+      fetchedCollege: []
     };
   },
   methods: {
-    addCollegeLogo: function addCollegeLogo() {},
+    addCollegeLogo: function addCollegeLogo() {
+      console.log(this.college.logo);
+    },
     addCollegeStamp: function addCollegeStamp() {},
     submitCollegeDetails: function submitCollegeDetails() {
       var _this = this;
@@ -2298,7 +2314,8 @@ __webpack_require__.r(__webpack_exports__);
     var _this2 = this;
 
     _Apis_Api__WEBPACK_IMPORTED_MODULE_0__.default.get('/api/college').then(function (response) {
-      _this2.college = response.data;
+      console.log(response);
+      _this2.fetchedCollege = response.data;
     });
   }
 });
@@ -2638,8 +2655,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Apis_Api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../../Apis/Api */ "./resources/js/Apis/Api.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -2769,7 +2784,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
-
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'createmarksheet',
@@ -3054,6 +3068,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -3067,7 +3089,8 @@ __webpack_require__.r(__webpack_exports__);
         phone: ""
       },
       event_response: false,
-      student_response: []
+      student_response: [],
+      errors: []
     };
   },
   mounted: function mounted() {
@@ -3092,6 +3115,10 @@ __webpack_require__.r(__webpack_exports__);
           _this2.student_response.text = error.response.data["message"];
           _this2.student_response.success = false;
           _this2.event_response = true;
+        }
+
+        if (error.response.status == 422) {
+          _this2.errors = error.response.data.errors;
         }
       });
     }
@@ -3160,9 +3187,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }, {
         text: 'Email',
         value: 'email'
-      }, {
-        text: 'Contact',
-        value: 'contact'
       }],
       students: []
     };
@@ -3564,8 +3588,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Apis_User__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../Apis/User */ "./resources/js/Apis/User.js");
-//
-//
 //
 //
 //
@@ -6487,8 +6509,18 @@ var render = function() {
                         [
                           _c(
                             "v-row",
-                            { attrs: { justify: "center" } },
+                            { attrs: { dense: "", justify: "center" } },
                             [
+                              _c(
+                                "v-avatar",
+                                [
+                                  _c("v-img", {
+                                    attrs: { src: _vm.fetchedCollege.logo }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
                               _c(
                                 "v-col",
                                 { attrs: { md: "6", cols: "12" } },
@@ -6522,6 +6554,16 @@ var render = function() {
                             "v-row",
                             { attrs: { justify: "center" } },
                             [
+                              _c(
+                                "v-avatar",
+                                [
+                                  _c("v-img", {
+                                    attrs: { src: _vm.fetchedCollege.stamp }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
                               _c(
                                 "v-col",
                                 { attrs: { cols: "12", md: "6" } },
@@ -6557,7 +6599,7 @@ var render = function() {
                             [
                               _c(
                                 "v-col",
-                                { attrs: { cols: "12", md: "6" } },
+                                { attrs: { cols: "12", md: "8" } },
                                 [
                                   _c("v-text-field", {
                                     attrs: {
@@ -7671,11 +7713,11 @@ var render = function() {
                     {
                       attrs: { width: "400" },
                       model: {
-                        value: _vm.response_dialog,
+                        value: _vm.event_response,
                         callback: function($$v) {
-                          _vm.response_dialog = $$v
+                          _vm.event_response = $$v
                         },
-                        expression: "response_dialog"
+                        expression: "event_response"
                       }
                     },
                     [
@@ -7755,7 +7797,7 @@ var render = function() {
                                   [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "8", md: "6" } },
+                                      { attrs: { cols: "8", md: "7" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
@@ -7776,6 +7818,24 @@ var render = function() {
                                         })
                                       ],
                                       1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-col",
+                                      { attrs: { cols: "12", md: "6" } },
+                                      [
+                                        _vm.errors.name != undefined
+                                          ? _c(
+                                              "span",
+                                              { staticClass: "red--text" },
+                                              [
+                                                _vm._v(
+                                                  _vm._s(_vm.errors.name[0])
+                                                )
+                                              ]
+                                            )
+                                          : _vm._e()
+                                      ]
                                     )
                                   ],
                                   1
@@ -7794,7 +7854,7 @@ var render = function() {
                                   [
                                     _c(
                                       "v-col",
-                                      { attrs: { cols: "8", md: "6" } },
+                                      { attrs: { cols: "8", md: "7" } },
                                       [
                                         _c("v-text-field", {
                                           attrs: {
@@ -7818,7 +7878,21 @@ var render = function() {
                                         })
                                       ],
                                       1
-                                    )
+                                    ),
+                                    _vm._v(" "),
+                                    _c("v-col", { attrs: { cols: "12" } }, [
+                                      _vm.errors.email != undefined
+                                        ? _c(
+                                            "span",
+                                            { staticClass: "red--text" },
+                                            [
+                                              _vm._v(
+                                                _vm._s(_vm.errors.email[0])
+                                              )
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ])
                                   ],
                                   1
                                 ),
@@ -8726,11 +8800,8 @@ var render = function() {
             ? _c(
                 "v-navigation-drawer",
                 {
-                  staticStyle: { "background-color": "#ebecf0" },
-                  attrs: {
-                    app: "",
-                    permanent: _vm.$vuetify.breakpoint.mdAndUp
-                  },
+                  staticStyle: { "background-color": "#3a3b3c" },
+                  attrs: { app: "" },
                   model: {
                     value: _vm.drawer_status,
                     callback: function($$v) {
@@ -8745,13 +8816,13 @@ var render = function() {
                       "div",
                       {
                         staticStyle: {
-                          border: "1px solid black",
+                          border: "1px solid white",
                           padding: "60px",
                           margin: "10px"
                         }
                       },
                       [
-                        _c("span", { attrs: { color: "black" } }, [
+                        _c("span", { staticClass: "white--text" }, [
                           _vm._v(
                             "\n                        Create M.\n                    "
                           )
@@ -8785,9 +8856,8 @@ var render = function() {
                         {
                           key: item.title,
                           attrs: {
-                            color: "black",
                             dense: "",
-                            "active-class": "black--text",
+                            "active-class": "white--text blue",
                             "no-action": ""
                           },
                           scopedSlots: _vm._u(
@@ -8800,6 +8870,7 @@ var render = function() {
                                       "v-list-item-content",
                                       [
                                         _c("v-list-item-title", {
+                                          staticClass: "white--text",
                                           domProps: {
                                             textContent: _vm._s(item.title)
                                           }
@@ -8836,16 +8907,20 @@ var render = function() {
                                 _c(
                                   "v-list-item-icon",
                                   [
-                                    _c("v-icon", [
-                                      _vm._v(_vm._s(subActions.icon))
-                                    ])
+                                    _c(
+                                      "v-icon",
+                                      { staticClass: "white--text" },
+                                      [_vm._v(_vm._s(subActions.icon))]
+                                    )
                                   ],
                                   1
                                 ),
                                 _vm._v(" "),
-                                _c("v-list-item-title", [
-                                  _vm._v(_vm._s(subActions.title))
-                                ])
+                                _c(
+                                  "v-list-item-title",
+                                  { staticClass: "white--text" },
+                                  [_vm._v(_vm._s(subActions.title))]
+                                )
                               ],
                               1
                             )

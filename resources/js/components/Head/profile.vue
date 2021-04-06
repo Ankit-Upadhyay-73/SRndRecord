@@ -45,18 +45,14 @@
                     </v-card-title>
                     <v-card-text>
                         <v-form>
-                            <v-row
+                            <v-row dense
                                 justify="center">
 
-                                <v-col
-                                    md="6" cols="12">
-
+                                <v-avatar>
                                     <v-img :src="fetchedCollege.logo">
-
                                     </v-img>
+                                </v-avatar>
 
-
-                                </v-col>
 
                                 <v-col
                                     md="6" cols="12">
@@ -76,15 +72,10 @@
 
                             <v-row justify="center">
 
-                                <v-col
-                                    md="6" cols="12">
-
-                                    <v-img :src="fetchedCollege.stamp" >
-
+                                <v-avatar>
+                                    <v-img :src="fetchedCollege.stamp">
                                     </v-img>
-
-                                </v-col>
-
+                                </v-avatar>
 
                                 <v-col cols="12" md="6">
                                     <v-file-input
@@ -101,7 +92,7 @@
 
                             </v-row>
                             <v-row justify="center">
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" md="8">
                                     <v-text-field
                                         :rules="[v=>!!v || 'Address Required']"
                                         dense
@@ -161,6 +152,8 @@ export default ({
 
         addCollegeLogo(){
 
+            console.log(this.college.logo);
+
         },
 
         addCollegeStamp(){
@@ -217,6 +210,7 @@ export default ({
 
         Api.get('/api/college').then(response=>{
 
+            console.log(response);
             this.fetchedCollege = response.data;
 
         });

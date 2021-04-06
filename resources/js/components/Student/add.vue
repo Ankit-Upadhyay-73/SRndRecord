@@ -59,7 +59,7 @@
                 <v-row class="d-flex" dense >
 
                     <v-dialog
-                        v-model="response_dialog"
+                        v-model="event_response"
                         width="400">
                         <v-card>
                             <v-card-text>
@@ -87,7 +87,7 @@
                             <v-card-text>
                                 <form class="mt-2">
                                     <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                        <v-col cols="8" md="6">
+                                        <v-col cols="8" md="7">
                                             <v-text-field
                                                 dense
                                                 outlined
@@ -97,10 +97,15 @@
                                                 v-model="student.name">
                                             </v-text-field>
                                         </v-col>
+
+                                        <v-col cols="12" md="6" >
+                                                <span  class="red--text" v-if="errors.name!=undefined">{{errors.name[0]}}</span>
+                                        </v-col>
+
                                     </v-row>
 
                                     <v-row class="d-flex" dense style="display:flex;justify-content:center">
-                                        <v-col cols="8" md="6">
+                                        <v-col cols="8" md="7">
                                             <v-text-field
                                                 dense
                                                 outlined
@@ -109,6 +114,9 @@
                                                 color="black"
                                                 v-model="student.email">
                                             </v-text-field>
+                                        </v-col>
+                                           <v-col cols="12">
+                                                <span class="red--text" v-if="errors.email!=undefined">{{errors.email[0]}}</span>
                                         </v-col>
                                     </v-row>
 
@@ -143,7 +151,7 @@ export default({
             student:{name:"",email:"",password:"",phone:""},
             event_response:false,
             student_response:[],
-
+            errors:[]
         }
     },
     mounted(){
@@ -173,6 +181,11 @@ export default({
                             this.student_response.text = error.response.data["message"];
                             this.student_response.success = false;
                             this.event_response = true;
+                        }
+
+                       if(error.response.status==422)
+                        {
+                            this.errors = error.response.data.errors;
                         }
 
                 });

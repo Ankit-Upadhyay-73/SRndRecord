@@ -22,4 +22,5 @@ class College extends Model
     {
         return $this->belongsToMany(Course::class, 'college_course');
     }
+
 }

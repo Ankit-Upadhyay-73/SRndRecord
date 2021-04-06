@@ -84,7 +84,7 @@ class StudentController extends Controller
             }
             else {
                 $user->delete();
-                return response()->json(["message" => "Collge and Courses details does not exists"],400);
+                return response()->json(["message" => "Collge and Courses  does not exists"],400);
             }
         }
     }

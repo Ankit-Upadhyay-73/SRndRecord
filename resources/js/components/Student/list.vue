@@ -36,8 +36,6 @@ import Api from './../../Apis/Api';
                             { text: 'id',align: 'start',value: 'id'},
                             { text: 'Name',value: 'name'},
                             { text: 'Email', value: 'email'},
-                            { text: 'Contact', value: 'contact'},
-
                         ],
                         students: []
                     }

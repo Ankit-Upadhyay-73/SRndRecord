@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Models\Mark;
 use App\Models\Result;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use PDF;
 
@@ -13,96 +14,54 @@ class ResultController extends Controller
     //
     public function create(Request $request)
     {
-        $student =  $request->student;
+        $marksheets = [];
+        $total_obtained= 0 ;
+        $total_weightage=0;
+        $result_status = true;
+        collect($request->subjects)->map(function($subject) use
+                        ($marksheets,$request,$total_obtained,$total_weightage)
+                        {
+                            $marksheets[] = [
+                                'student_id'=>$request->student,
+                                'subject_id'=>$subject["id"],
+                                'obtainedMarks'=>$subject["obtained"],
+                                'total'=>$subject["total"]
+                            ];
 
-        //store all Subjects details with Obtained Marks
-        $obtainedMarks = [];
-        $weightages = [];
-        $passingInEach = [];
-        $data = $this->addToMarks($request, $passingInEach, $weightages, $obtainedMarks);
-        return sizeof($request->$obtainedMarks);
-        $passingInEach = $data[0];
-        $weightages = $data[1];
-        $obtainedMarks = $data[2];
+                            $total_obtained+=$subject["obtained"];
+                            $total_weightage+=$subject["total"];
+                            if($subject["obtained"] < $subject["passing"]){
+                                $this->result_status = false;
+                            }
 
-        $exam = Exam::where("name", $request->exam)->get();
-        if ($exam->count() == 0)
-            $examid = $this->addExam($request);
-        else
-            $examid = $exam[0]->id;
+                        }
+            );
 
-        //variales to  create final result
-        $totalObtained = 0;
-        $totalWeightage = 0;
-        $totalPassing = 0;
-        $result = true;
+        Mark::insert($marksheets);
 
-        for ($i = 0; $i < sizeOf($obtainedMarks); $i++) {
-            $totalObtained += $obtainedMarks[$i];
-            $totalWeightage += $weightages[$i];
-            $totalPassing += $passingInEach[$i];
-
-            if ($obtainedMarks[$i] < $weightages[$i])
-                $result = false;
+        if(!Exam::where('name',$request->exam)->exists())
+        {
+            Exam::create([
+                'name' => $request->exam,
+                'year' => $request->year
+            ]);
         }
 
-        //calculate result
-        $percentage = ($totalObtained / $totalWeightage) * 100;
-        if ($request) {
-            if ($totalObtained < $totalPassing)
-                $result = false;
-            else
-                $request = true;
-        }
+        $percentage = ($total_obtained/$total_weightage)*100;
+
+        $exam = Exam::where('name',$request->exam)->first();
 
         Result::create([
-            'student_id' => $student,
-            'exam_id' => $examid,
-            'status' => $result,
+            'student_id' => $request->student,
+            'exam_id' => $exam->id,
+            'status' => $result_status,
             'percentage' => $percentage
         ]);
 
-
         return response()->json(["message" => "Result Created Successfully"]);
+
     }
 
-    public function addExam(Request $request)
-    {
-        $exam = new Exam();
-        $exam->name = $request->exam;
-        $exam->year = $request->year;
-        $exam->save();
-        return $exam->id;
-    }
-
-    public function addToMarks(Request $request, $passingInEach, $weightages, $obtainedMarks)
-    {
-        $dataSet = [];
-        $subjects =  $request->subjects;
-        foreach ($subjects as $subject) {
-
-            $mark = $subject["obtained"];
-            $passing = $subject["passing"];
-            $weightage = $subject["total"];
-
-            //pushing data in array to create result
-            array_push($passingInEach, $passing);
-            array_push($weightages, $weightage);
-            array_push($obtainedMarks, $mark);
-
-            // adding record to marks table
-            Mark::create([
-                'student_id' => $request->student,
-                'subject_id' => $subject["id"],
-                'obtabinedMarks' => $mark,
-                'total' => $weightage
-            ]);
-        }
-        array_push($dataSet, $passingInEach);
-        array_push($dataSet, $weightages);
-        array_push($dataSet, $obtainedMarks);
-        return $dataSet;
-    }
 
     public function createMarksheetPDF()
     {

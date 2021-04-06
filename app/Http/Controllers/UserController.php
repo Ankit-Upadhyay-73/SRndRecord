@@ -53,8 +53,14 @@ class UserController extends Controller
 
         // return response()->json($user, 201);;
 
-        if (User::where('phone', $request->phone)->orWhere('email', $request->email)->exists())
-            return response()->json(["message" => "You are already registered"])->setStatusCode(422);
+        if (
+                User::where('phone', $request->phone)
+                    ->orWhere('email', $request->email)
+                    ->exists()
+            )
+            return response()
+                        ->json(["message" => "You are already registered"])
+                        ->setStatusCode(422);
         else {
 
             if ($this->headExists($request))
@@ -145,6 +151,17 @@ class UserController extends Controller
 
     public function addingToCollege(Request $request)
     {
+
+        $college = College::firstOrCreate([
+            'name' => $request->college
+        ],     [
+                    "name" => $request->college,
+                    "logo" => "",
+                    "address" => "",
+                    "stamp" => ""
+                ]);
+            return $college;
+
         if (!College::where('name', $request->college)->exists()) {
             $college = new College(
                 [
@@ -157,7 +174,7 @@ class UserController extends Controller
             $college->save();
             return $college;
         } else
-            return College::where('name', $request->college)->get()[0];
+            return College::where('name', $request->college)->first();
     }
 
 
@@ -174,6 +191,6 @@ class UserController extends Controller
             $course->save();
             return $course;
         }
-        return Course::where("name", $request->course)->get()[0];
+        return Course::where("name", $request->course)->first();
     }
 }

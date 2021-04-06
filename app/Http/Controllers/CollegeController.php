@@ -6,9 +6,7 @@ use App\Models\College;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use SebastianBergmann\Environment\Console;
 
 class CollegeController extends Controller
 {
@@ -32,14 +30,12 @@ class CollegeController extends Controller
         $college = College::find($college_id);
 
         $stamp =  $request->file('stamp');
-        $stamp_extension = $stamp->getClientOriginalExtension();
         $logo = $request->file('logo');
-        $logo_extension = $logo->getClientOriginalExtension();
-        $logo_hash = strval(Hash::make($request->file('logo')->getClientOriginalName()));
-
-        $stamp_hash = strval(Hash::make($request->file('stamp')->getClientOriginalName()));
-        Storage::disk('public')->put($logo_hash. '.' . $stamp_extension, File::get($stamp));
-        Storage::disk('public')->put($stamp_hash. '.' . $logo_extension, File::get($logo));
+        $logo_hash = strval(Carbon::now()->toTimeString().'_'.$logo->getClientOriginalName());
+        $stamp_hash = strval(Carbon::now()->toTimeString().'_'.$stamp->getClientOriginalName());
+        // storing file in storage
+        Storage::disk('public')->put($logo_hash, File::get($stamp));
+        Storage::disk('public')->put($stamp_hash, File::get($logo));
 
         $college->address = $request->address;
         $college->logo = $logo_hash;
@@ -56,19 +52,11 @@ class CollegeController extends Controller
 
         $college_id = $request->user()->colleges->sortByDesc('updated_id')->first()->id;
         $college =  College::find($college_id);
-        $name = $college->name;
-        $logo = $college->logo;
-        $stamp = $college->stamp;
-        $address = $college->address;
-        $logoPath = Storage::disk('public')->get($logo.'.png');
-        $stampPath = Storage::disk('public')->get($stamp.'.png');
 
         $response_college = [];
-
-        $response_college["address"] = $address;
-        $response_college["logo"] = $logoPath;
-        $response_college["stamp"] =  $stampPath;
-
+        $response_college["logo"] = asset('storage/'.$college->logo);
+        $response_college["stamp"] = asset('storage/'.$college->stamp);
+        $response_college["address"] = $college->address;
         return response()->json($response_college);
 
     }

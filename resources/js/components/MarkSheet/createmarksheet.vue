@@ -124,7 +124,6 @@
 <script>
 
 import Api from './../../Apis/Api'
-import axios from 'axios'
 
 export default
     {

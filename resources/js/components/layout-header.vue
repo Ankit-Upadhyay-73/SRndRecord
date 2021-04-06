@@ -77,15 +77,14 @@
                 <!-- <> drawer starts here -->
                 <v-navigation-drawer v-if="!showLoginRegisterMenu"
                     app
-                    :permanent="$vuetify.breakpoint.mdAndUp"
-                    style="background-color:#ebecf0"
+                    style="background-color:#3a3b3c"
                     v-model="drawer_status">
 
                     <v-list>
                         <div
-                            style="border:1px solid black;padding:60px;margin:10px">
+                            style="border:1px solid white;padding:60px;margin:10px">
                             <span
-                                color="black"
+                                class="white--text"
                               >
                                 Create M.
                             </span>
@@ -100,17 +99,16 @@
 
                     <v-list>
                         <v-list-group
-                            color="black"
                             dense
                             v-for="item in actions"
                             v-model="item.active"
                             :key="item.title"
-                            active-class="black--text"
+                            active-class="white--text blue"
                             no-action>
                             <template v-slot:activator>
 
                                 <v-list-item-content>
-                                    <v-list-item-title v-text="item.title">
+                                    <v-list-item-title v-text="item.title" class="white--text">
                                     </v-list-item-title>
                                 </v-list-item-content>
 
@@ -123,9 +121,9 @@
                                 >
 
                                 <v-list-item-icon>
-                                    <v-icon>{{ subActions.icon }}</v-icon>
+                                    <v-icon class="white--text">{{ subActions.icon }}</v-icon>
                                 </v-list-item-icon>
-                                <v-list-item-title>{{ subActions.title }}</v-list-item-title>
+                                <v-list-item-title class="white--text">{{ subActions.title }}</v-list-item-title>
 
                             </v-list-item>
 
